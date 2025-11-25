@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <!-- The Blue to Purple Gradient -->
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" /> <!-- Blue-400 -->
+      <stop offset="100%" style="stop-color:#c084fc;stop-opacity:1" /> <!-- Purple-400 -->
+    </linearGradient>
+  </defs>
+
+  <!-- Icon Background (Slate-950 to match your OS) -->
+  <rect width="64" height="64" rx="16" fill="#0f172a" />
+
+  <!-- The "SM" Text -->
+  <text 
+    x="50%" 
+    y="54%" 
+    dominant-baseline="middle" 
+    text-anchor="middle" 
+    font-family="monospace" 
+    font-weight="bold" 
+    font-size="34" 
+    fill="url(#grad)"
+  >
+    SM
+  </text>
+</svg>
