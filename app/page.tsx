@@ -7,7 +7,6 @@ import { BookOpen, LayoutGrid } from "lucide-react";
 import StoryLayout from "./components/layouts/StoryLayout";
 import BentoLayout from "./components/layouts/BentoLayout";
 
-// Removed 'resume' since you mentioned you are keeping only System and Story
 type LayoutType = 'story' | 'bento';
 
 export default function PortfolioRouter() {
@@ -35,8 +34,7 @@ export default function PortfolioRouter() {
   return (
     <main className="relative min-h-screen bg-slate-950 text-slate-300 selection:bg-blue-500/30">
       
-      {/* --- FLOATING TOGGLE SWITCH (UPDATED: BOTTOM CENTER) --- */}
-      {/* Changed: top-6 -> bottom-8, z-50 -> z-[60], added centering logic */}
+      {/* --- FLOATING TOGGLE SWITCH --- */}
       <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[60] flex justify-center pointer-events-none">
         <div className="bg-slate-900/80 backdrop-blur-md border border-slate-800 p-1.5 rounded-full shadow-2xl pointer-events-auto flex gap-1">
           <ToggleButton 
