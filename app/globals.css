@@ -2,20 +2,34 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  /* High-Tech Text Selection */
+  ::selection {
+    background-color: rgba(99, 102, 241, 0.3); /* Indigo-500 with opacity */
+    color: #ffffff;
+    text-shadow: 0 0 8px rgba(99, 102, 241, 0.8);
+  }
+}
+
 @layer utilities {
-  /* Custom Scrollbar */
+  /* Hide cursor on touch devices to prevent bugs */
+  .no-cursor {
+    cursor: none;
+  }
+  
+  /* Your existing scrollbar CSS... */
   ::-webkit-scrollbar {
     width: 10px;
   }
   ::-webkit-scrollbar-track {
-    background: #020617; /* Slate 950 */
+    background: #020617; 
   }
   ::-webkit-scrollbar-thumb {
-    background: #1e293b; /* Slate 800 */
+    background: #1e293b; 
     border-radius: 5px;
     border: 2px solid #020617;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #3b82f6; /* Blue 500 */
+    background: #3b82f6; 
   }
 }

@@ -19,7 +19,20 @@ export const DATA = {
   },
   experience: [
     {
-      role: "Frontend Developer",
+      role: "Full Stack Developer",
+      company: "Fiesta App",
+      date: "06/2025 - 12/2025",
+      desc: "Built the initial platform from scratch and later re-architected the core into a multi-vertical SaaS Ecosystem.",
+      achievements: [
+        "Architected and built the initial Venue Management platform from the ground up (Greenfield development).",
+        "Led the strategic pivot to a 'Chameleon Architecture', scaling the single app into an ecosystem supporting 7+ distinct industries (Catering, Logistics, Security).",
+        "Designed polymorphic MongoDB schemas to handle diverse business logic within a unified codebase without data clutter.",
+        "Integrated Puppeteer for automated invoicing and Cloudinary for high-performance media management."
+      ],
+      stack: ["React", "Node.js", "MongoDB", "Puppeteer"]
+    },
+    {
+      role: "Full Stack Developer",
       company: "Tunisair",
       date: "02/2024 - 05/2024",
       desc: "Designed and developed a responsive website using the MERN stack. Improved UX and site performance.",
@@ -60,9 +73,9 @@ export const DATA = {
       title: "Fiesta App",
       category: "SaaS Ecosystem",
       tag: "SaaS",
-      desc: "A comprehensive SaaS solution for event venue management with RBAC.",
-      story: "The event management space is cluttered with tools that don't talk to each other. Fiesta App was born out of the need to unify venue booking, financial reporting, and vendor management. I engineered a complex Role-Based Access Control (RBAC) system for multi-user environments.",
-      tech: ["React", "TypeScript", "Node.js", "MongoDB", "Redux Toolkit"],
+      desc: "A multi-vertical operating system supporting 7+ distinct business types via chameleon architecture.",
+      story: "This journey started by building a dedicated tool for Venues from scratch. As market needs evolved, I re-engineered the entire core into a 'Chameleon Architecture'. Today, it's a multi-vertical ecosystem where the UI, Database, and Features adapt dynamically based on who is logged in. Built with React 19, it now supports infinite workflows from Catering inventory to Security shift planning all from one unified codebase.",
+      tech: ["React", "Node.js", "MongoDB", "Redux Toolkit", "Puppeteer", "Cloudinary"],
       color: "bg-pink-500/10 text-pink-500 border-pink-500/20",
       images: [
         "/Fiesta/dashboard.png",
@@ -71,6 +84,37 @@ export const DATA = {
         "/Fiesta/Finance.png",
         "/Fiesta/invoice.png",
         "/Fiesta/tasks.png"
+      ],
+    },
+    {
+      id: "autoscout",
+      title: "AutoScout",
+      category: "Vertical Search Engine",
+      tag: "Aggregator",
+      desc: "A real-time search engine aggregating listings from multiple Tunisian car marketplaces into a single UI.",
+      story: "The used car market in Tunisia is fragmented across messy platforms like Automobile.tn and Baniola. Finding a deal requires opening twenty tabs. I built AutoScout to unify this chaos.\n\nI engineered a custom scraping engine using Cheerio to fetch data in real-time. The core engineering challenge was Data Normalization: I wrote complex Regex patterns to parse unstructured HTML descriptions into clean, comparable JSON. The platform also includes a 'Fair Price' estimator that calculates market averages dynamically.",
+      tech: ["Next.js", "TypeScript", "Cheerio", "Tailwind CSS", "Regex"],
+      color: "bg-violet-500/10 text-violet-500 border-violet-500/20",
+      
+      images: [
+        "/AutoScout/home.png",
+        "/AutoScout/listings1.png",
+        "/AutoScout/listings2.png",
+        "/AutoScout/Browse.png",
+      ],
+    },
+    {
+      id: "atlas",
+      title: "Atlas Insights",
+      category: "High-Scale Analytics Platform ",
+      tag: "Analytics",
+      desc: "A multi-tenant analytics platform built for high-throughput ingestion using Redis queues and asynchronous processing.",
+      story: "Building an analytics service requires balancing write-heavy ingestion with read-heavy dashboards. Standard synchronous approaches bottleneck during traffic spikes. The challenge was to build a system capable of ingesting millions of events asynchronously while ensuring strict data isolation.\n\nI engineered an Event-Driven Pipeline: The API accepts events and offloads them instantly to Redis (BullMQ) queues. Background workers then aggregate raw streams into time-series metrics via PostgreSQL UPSERTs. This architecture ensures zero-latency ingestion, 202 Accepted responses, and a responsive UI even under heavy load.",
+      tech: ["NestJS", "Next.js 14", "PostgreSQL", "Redis", "Docker", "BullMQ"],
+      color: "bg-sky-500/10 text-sky-500 border-sky-500/20",
+      images: [
+        "/Atlas/dashboard.png",
+        "/Atlas/api-docs.png",
       ],
     },
     {

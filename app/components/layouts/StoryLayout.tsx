@@ -1,16 +1,89 @@
 "use client";
 
-import React, { useState, MouseEvent, useEffect } from "react";
+import React, { useState, MouseEvent, useEffect, useRef } from "react";
 import Image from "next/image";
 import {
   Github, Linkedin, Mail, MapPin, Phone, Download,
   Code, Database, Terminal, Layers, Menu, X, FolderGit2,
-  ArrowRight, ExternalLink, LayoutGrid, Film, ZoomIn ,BriefcaseIcon 
+  ArrowRight, ExternalLink, LayoutGrid, Film, ZoomIn, BriefcaseIcon, Cpu 
 } from "lucide-react";
-import { motion, useMotionTemplate, useMotionValue, AnimatePresence } from "framer-motion";
+import { 
+  motion, useMotionTemplate, useMotionValue, AnimatePresence, useSpring, useTransform 
+} from "framer-motion";
 import { DATA } from "../../data";
 
-// --- LIGHTBOX COMPONENT (Keep as is) ---
+// --- 1. MAGNETIC NAV ITEM ---
+const MagneticNav = ({ children, onClick, className }: any) => {
+  const ref = useRef<HTMLButtonElement>(null);
+  
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+
+  const mouseXSpring = useSpring(x, { stiffness: 150, damping: 15, mass: 0.1 });
+  const mouseYSpring = useSpring(y, { stiffness: 150, damping: 15, mass: 0.1 });
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!ref.current) return;
+    const { height, width, left, top } = ref.current.getBoundingClientRect();
+    const middleX = e.clientX - (left + width / 2);
+    const middleY = e.clientY - (top + height / 2);
+    x.set(middleX * 0.3); // Strength of magnetic pull
+    y.set(middleY * 0.3);
+  };
+
+  const handleMouseLeave = () => {
+    x.set(0);
+    y.set(0);
+  };
+
+  return (
+    <motion.button
+      ref={ref}
+      onClick={onClick}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      style={{ x: mouseXSpring, y: mouseYSpring }}
+      className={className}
+    >
+      {children}
+    </motion.button>
+  );
+};
+
+// --- 2. HYPERTEXT ANIMATION ---
+const HyperText = ({ text, className = "" }: { text: string, className?: string }) => {
+  const [displayText, setDisplayText] = useState(text);
+  const alphabets = "ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+";
+
+  const triggerAnimation = () => {
+    let iteration = 0;
+    const interval = setInterval(() => {
+      setDisplayText((prev) =>
+        prev
+          .split("")
+          .map((letter, index) => {
+            if (index < iteration) return text[index];
+            return alphabets[Math.floor(Math.random() * 26)];
+          })
+          .join("")
+      );
+      if (iteration >= text.length) clearInterval(interval);
+      iteration += 1 / 3;
+    }, 30);
+  };
+
+  useEffect(() => {
+    triggerAnimation();
+  }, [text]);
+
+  return (
+    <span className={className} onMouseEnter={triggerAnimation}>
+      {displayText}
+    </span>
+  );
+};
+
+// --- LIGHTBOX ---
 const Lightbox = ({ src, onClose }: { src: string, onClose: () => void }) => {
   return (
     <motion.div 
@@ -32,7 +105,7 @@ const Lightbox = ({ src, onClose }: { src: string, onClose: () => void }) => {
   );
 };
 
-// --- DRAWER COMPONENT (Keep as is) ---
+// --- PROJECT DRAWER ---
 const ProjectDrawer = ({ project, onClose }: { project: any, onClose: () => void }) => {
   const [viewMode, setViewMode] = useState<'scrapbook' | 'filmstrip'>('scrapbook');
   const [lightboxImg, setLightboxImg] = useState<string | null>(null);
@@ -152,20 +225,33 @@ export default function StoryLayout() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-300 font-sans selection:bg-blue-500/30 overflow-x-hidden">
       
-      {/* NAVIGATION */}
+      {/* NAVIGATION with Magnetic Buttons */}
       <nav className="fixed top-0 left-0 right-0 z-40 bg-slate-950/80 backdrop-blur-md border-b border-slate-800/50">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="text-xl font-bold text-white tracking-tight cursor-pointer group" onClick={() => window.scrollTo(0, 0)}>
             <span className="group-hover:text-blue-400 transition-colors duration-300">Salim</span>
             <span className="text-blue-500 group-hover:text-white transition-colors duration-300">May</span>
           </div>
-          <div className="hidden md:flex gap-4">
+          
+          {/* Desktop Nav */}
+          <div className="hidden md:flex gap-1">
             {["About", "Experience", "Projects", "Skills", "Education", "Contact"].map((item) => (
-              <button key={item} onClick={() => scrollTo(item.toLowerCase())} className="relative px-3 py-2 text-sm font-medium text-slate-400 hover:text-white transition-colors duration-200">{item}</button>
+              <MagneticNav
+                key={item}
+                onClick={() => scrollTo(item.toLowerCase())}
+                className="relative px-4 py-2 text-sm font-medium text-slate-400 hover:text-white transition-colors duration-200"
+              >
+                {item}
+              </MagneticNav>
             ))}
           </div>
-          <button className="md:hidden text-slate-300 hover:text-white" onClick={() => setIsMenuOpen(!isMenuOpen)}>{isMenuOpen ? <X /> : <Menu />}</button>
+
+          <button className="md:hidden text-slate-300 hover:text-white" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+            {isMenuOpen ? <X /> : <Menu />}
+          </button>
         </div>
+
+        {/* Mobile Nav */}
         {isMenuOpen && (
           <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="md:hidden bg-slate-900 border-b border-slate-800 px-6 py-4 flex flex-col gap-4">
             {["About", "Experience", "Projects", "Skills", "Education", "Contact"].map((item) => (
@@ -177,6 +263,7 @@ export default function StoryLayout() {
 
       {/* HERO SECTION */}
       <section id="about" className="relative pt-32 pb-20 px-6 overflow-hidden">
+        {/* Background Blobs */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute -top-[50%] -left-[50%] w-[200%] h-[200%] animate-spin-slow opacity-10">
             <div className="absolute top-[50%] left-[50%] w-[600px] h-[600px] bg-blue-600 rounded-full blur-[120px] -translate-x-1/2 -translate-y-1/2" />
@@ -187,12 +274,13 @@ export default function StoryLayout() {
         <FadeIn className="max-w-4xl mx-auto text-center relative z-10">
           <div className="relative w-32 h-32 md:w-40 md:h-40 mx-auto mb-8">
             <div className="relative w-full h-full rounded-full overflow-hidden border-4 border-slate-800 shadow-xl">
-              <Image src="/me.jpg" alt="Salim May" fill className="object-cover object-top" priority />
+              <Image src="/me.png" alt="Salim May" fill className="object-cover object-top" priority />
             </div>
           </div>
+          
           <div className="inline-flex items-center gap-2 px-4 py-2 mb-8 text-xs font-bold tracking-widest text-blue-300 uppercase bg-blue-900/10 rounded-full border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.1)] hover:shadow-[0_0_20px_rgba(59,130,246,0.2)] hover:border-blue-500/40 transition-all cursor-default select-none">
             <Terminal size={12} className="text-blue-400" />
-            {DATA.personal.role}
+            <p className="text-blue-300">Full-stack Developer & System Admin</p>
           </div>
 
           <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 tracking-tight">
@@ -209,7 +297,7 @@ export default function StoryLayout() {
             <button onClick={() => scrollTo("contact")} className="px-8 py-3 bg-blue-600 text-white rounded-full font-medium hover:bg-blue-500 transition-all shadow-lg shadow-blue-500/25">
               Get in Touch
             </button>
-            <a href="/resume.pdf" download className="px-8 py-3 bg-slate-800 text-white rounded-full font-medium hover:bg-slate-700 transition-all flex items-center gap-2 border border-slate-700">
+            <a href="/salimmay.pdf" download className="px-8 py-3 bg-slate-800 text-white rounded-full font-medium hover:bg-slate-700 transition-all flex items-center gap-2 border border-slate-700">
               <Download size={18} /> Download Resume
             </a>
           </div>
@@ -324,7 +412,7 @@ export default function StoryLayout() {
   );
 }
 
-// --- ANIMATION WRAPPERS & HELPERS (Keep as is from your provided code, just ensuring exports) ---
+// --- HELPERS  ---
 const FadeIn = ({ children, delay = 0, className = "" }: any) => (
   <motion.div
     initial={{ opacity: 0, y: 30 }}
