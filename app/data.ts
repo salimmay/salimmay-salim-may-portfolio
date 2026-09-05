@@ -263,3 +263,20 @@ export const DATA = {
     },
   ]
 };
+/**
+ * Headline numbers, derived from the data above rather than typed out, so they
+ * can't fall out of date the next time a project or role is added. Used by both
+ * the 3D hero and the Bento stat strip.
+ */
+export const STATS = {
+  projects: DATA.projects.length,
+  roles: DATA.experience.length,
+  technologies: DATA.techStack.reduce((total, group) => total + group.skills.length, 0),
+  /** Earliest role start year, read out of the "MM/YYYY - ..." date strings. */
+  startYear: Math.min(
+    ...DATA.experience.map((role) => Number(role.date.slice(3, 7))).filter(Number.isFinite)
+  ),
+};
+
+/** Years since the first role. A function, so it stays right after New Year. */
+export const yearsBuilding = () => new Date().getFullYear() - STATS.startYear;

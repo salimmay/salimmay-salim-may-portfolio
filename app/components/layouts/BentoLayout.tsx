@@ -7,13 +7,13 @@ import {
   Github, Linkedin, Mail, MapPin,
   Terminal, Cpu, Layers,
   ArrowUpRight,
-  Download, X, Maximize2, ChevronLeft, ChevronRight
+  Download, X, Maximize2, ChevronLeft, ChevronRight, ChevronDown, Clock
 } from "lucide-react";
 import { 
   motion, Variants, AnimatePresence, 
   useMotionValue, useTransform, useMotionTemplate, useSpring 
 } from "framer-motion";
-import { DATA, type Project } from "../../data"; 
+import { DATA, STATS, yearsBuilding, type Project } from "../../data"; 
 import ContributionGraph from "../ContributionGraph";
 
 // Never emits — the snapshot differs per environment, not over time.
@@ -91,6 +91,76 @@ const TiltCard = ({ children, className = "", onClick }: { children: React.React
     </motion.div>
   );
 };
+
+// --- LIVE CLOCK CELL ---
+// A dashboard should show something that is actually moving. This one is
+// honest: the time really is Tunis time, and the offset is measured against
+// the visitor's own clock. Ticking through useSyncExternalStore rather than
+// setState-in-an-effect, which is both the idiomatic pattern and lint-clean.
+const TUNIS_TZ = "Africa/Tunis";
+
+const subscribeSecond = (onChange: () => void) => {
+  const id = window.setInterval(onChange, 1000);
+  return () => window.clearInterval(id);
+};
+const secondsNow = () => Math.floor(Date.now() / 1000);
+
+const LiveCell = () => {
+  // Server snapshot is 0, so the first paint shows placeholders instead of a
+  // time that would disagree with the client and trip a hydration warning.
+  const seconds = useSyncExternalStore(subscribeSecond, secondsNow, () => 0);
+
+  const now = seconds ? new Date(seconds * 1000) : null;
+  const time = now
+    ? now.toLocaleTimeString("en-GB", { timeZone: TUNIS_TZ, hour12: false })
+    : "--:--:--";
+  // %24 guards the midnight edge, where some engines report hour 24.
+  const hour = now ? Number(time.slice(0, 2)) % 24 : -1;
+  const working = hour >= 9 && hour < 18;
+
+  // Whole-hour difference between Tunis and wherever the visitor is.
+  let offsetLabel = "";
+  if (now) {
+    const diff = Math.round(
+      (new Date(now.toLocaleString("en-US", { timeZone: TUNIS_TZ })).getTime() -
+        new Date(now.toLocaleString("en-US")).getTime()) /
+        3600000
+    );
+    offsetLabel =
+      diff === 0
+        ? "Same time as you"
+        : diff > 0
+          ? `${diff}h ahead of you`
+          : `${Math.abs(diff)}h behind you`;
+  }
+
+  return (
+    <div className="h-full bg-zinc-900/50 border border-zinc-800 rounded-3xl p-8 flex flex-col justify-between gap-6">
+      <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-zinc-500">
+        <span
+          className={`w-2 h-2 rounded-full ${working ? "bg-green-500 animate-pulse" : "bg-amber-500"}`}
+        />
+        <Clock size={12} /> Tunis
+      </div>
+      <div>
+        <p className="text-4xl md:text-5xl font-bold text-white font-mono tabular-nums tracking-tight">
+          {time}
+        </p>
+        <p className="text-zinc-500 text-sm mt-2">{offsetLabel || "\u00a0"}</p>
+      </div>
+      <p className="text-[11px] font-mono uppercase tracking-wider text-zinc-600">
+        {now ? (working ? "Within working hours" : "Outside working hours") : "\u00a0"}
+      </p>
+    </div>
+  );
+};
+
+const Stat = ({ value, label }: { value: string; label: string }) => (
+  <div>
+    <p className="text-3xl md:text-4xl font-bold text-white tabular-nums">{value}</p>
+    <p className="text-zinc-500 text-[11px] mt-1 uppercase tracking-wider">{label}</p>
+  </div>
+);
 
 // --- ANIMATION VARIANTS ---
 const containerVar: Variants = {
@@ -279,6 +349,12 @@ const ProjectModal = ({ project, onClose }: { project: Project; onClose: () => v
 // --- MAIN COMPONENT ---
 export default function BentoLayout() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  // Which cell is expanded, if any. Expanding reflows the grid in place via
+  // framer's layout animation, and reveals content Bento otherwise hides —
+  // per-role achievements and the full skill lists.
+  const [expandedCell, setExpandedCell] = useState<"experience" | "tech" | null>(null);
+  const toggleCell = (cell: "experience" | "tech") =>
+    setExpandedCell((current) => (current === cell ? null : cell));
 
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-300 font-sans selection:bg-indigo-500/30 p-4 md:p-8 pt-28 pb-32">
@@ -353,29 +429,87 @@ export default function BentoLayout() {
             </TiltCard>
           </motion.div>
 
-          {/* 3. TECH STACK */}
-          <motion.div variants={itemVar} className="md:col-span-12 bg-zinc-900/30 border border-zinc-800 rounded-3xl p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
+          {/* 3. AT A GLANCE + LIVE CLOCK */}
+          <motion.div
+            variants={itemVar}
+            className="md:col-span-8 bg-zinc-900/30 border border-zinc-800 rounded-3xl p-8 grid grid-cols-2 md:grid-cols-4 gap-6"
+          >
+            <Stat value={String(STATS.projects)} label="Projects shipped" />
+            <Stat value={`${yearsBuilding()}+`} label="Years building" />
+            <Stat value={String(STATS.technologies)} label="Technologies" />
+            <Stat value={String(STATS.roles)} label="Roles held" />
+          </motion.div>
+
+          <motion.div variants={itemVar} className="md:col-span-4">
+            <LiveCell />
+          </motion.div>
+
+          {/* 4. TECH STACK */}
+          <motion.div layout variants={itemVar} className="md:col-span-12 bg-zinc-900/30 border border-zinc-800 rounded-3xl p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
             <div className="shrink-0">
-               <h3 className="text-xl font-bold text-white flex items-center gap-2">
-                 <Cpu className="text-indigo-500" /> Technical Arsenal
-               </h3>
-               <p className="text-zinc-500 text-sm mt-1">The tools I use to build.</p>
+               <button
+                 onClick={() => toggleCell("tech")}
+                 className="group/t flex items-center gap-3 text-left"
+               >
+                 <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                   <Cpu className="text-indigo-500" /> Technical Arsenal
+                 </h3>
+                 <ChevronDown
+                   size={16}
+                   className={`text-zinc-600 group-hover/t:text-indigo-400 transition-all ${expandedCell === "tech" ? "rotate-180" : ""}`}
+                 />
+               </button>
+               <p className="text-zinc-500 text-sm mt-1">
+                 {expandedCell === "tech" ? "Every tool, listed." : "The tools I use to build."}
+               </p>
             </div>
             
             <div className="flex-1 w-full grid grid-cols-2 md:grid-cols-4 gap-4">
                {DATA.techStack.map((tech) => (
-                 <TechCategory key={tech.title} title={tech.title} items={tech.items} icon={<tech.icon size={16} />} />
+                 <TechCategory
+                   key={tech.title}
+                   title={tech.title}
+                   items={tech.items}
+                   skills={tech.skills}
+                   icon={<tech.icon size={16} />}
+                   expanded={expandedCell === "tech"}
+                 />
                ))}
             </div>
           </motion.div>
 
           {/* 4. EXPERIENCE LIST */}
-          <motion.div variants={itemVar} className="md:col-span-4 row-span-2 bg-zinc-900/50 border border-zinc-800 rounded-3xl p-8">
-            <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
-              <Layers className="text-indigo-500" /> Experience
-            </h3>
-            
-            <div className="space-y-8 relative before:absolute before:left-[11px] before:top-2 before:h-[85%] before:w-[2px] before:bg-zinc-800">
+          <motion.div
+            layout
+            variants={itemVar}
+            className={`${expandedCell === "experience" ? "md:col-span-12" : "md:col-span-4 row-span-2"} bg-zinc-900/50 border border-zinc-800 rounded-3xl p-8`}
+          >
+            {/* Header doubles as the expand control. Expanding reveals each
+                role's achievements and stack, which this layout otherwise
+                drops entirely — it only ever showed the one-line desc. */}
+            <button
+              onClick={() => toggleCell("experience")}
+              className="group/e w-full flex items-center justify-between gap-4 mb-6"
+            >
+              <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                <Layers className="text-indigo-500" /> Experience
+              </h3>
+              <span className="flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-wider text-zinc-600 group-hover/e:text-indigo-400 transition-colors">
+                {expandedCell === "experience" ? "collapse" : "detail"}
+                <ChevronDown
+                  size={14}
+                  className={`transition-transform ${expandedCell === "experience" ? "rotate-180" : ""}`}
+                />
+              </span>
+            </button>
+
+            <div
+              className={
+                expandedCell === "experience"
+                  ? "grid md:grid-cols-2 xl:grid-cols-3 gap-x-10 gap-y-8"
+                  : "space-y-8 relative before:absolute before:left-[11px] before:top-2 before:h-[85%] before:w-[2px] before:bg-zinc-800"
+              }
+            >
               {DATA.experience.map((job, i) => (
                 <div key={i} className="relative pl-8">
                   <div className="absolute left-0 top-1.5 w-6 h-6 bg-zinc-900 border-4 border-zinc-800 rounded-full z-10" />
@@ -383,6 +517,29 @@ export default function BentoLayout() {
                   <p className="text-indigo-400 text-sm font-medium mb-1">{job.company}</p>
                   <p className="text-zinc-500 text-xs mb-2">{job.date}</p>
                   <p className="text-zinc-400 text-xs leading-relaxed">{job.desc}</p>
+
+                  {expandedCell === "experience" && (
+                    <div className="mt-4 space-y-px">
+                      {job.achievements.map((item, n) => (
+                        <div key={item} className="flex gap-3 border-l border-zinc-800 py-1.5 pl-4">
+                          <span className="shrink-0 font-mono text-[10px] text-zinc-600">
+                            {String(n + 1).padStart(2, "0")}
+                          </span>
+                          <p className="text-zinc-400 text-xs leading-relaxed">{item}</p>
+                        </div>
+                      ))}
+                      <div className="flex flex-wrap gap-1.5 pt-3">
+                        {job.stack.map((tech) => (
+                          <span
+                            key={tech}
+                            className="px-2 py-0.5 rounded-full bg-zinc-900 border border-zinc-800 text-[10px] text-zinc-500"
+                          >
+                            {tech}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
@@ -460,9 +617,34 @@ const SocialBtn = ({ icon, href, label }: { icon: React.ReactNode; href: string;
   <a href={href} target="_blank" rel="noopener noreferrer" className="p-3 bg-zinc-800 text-zinc-400 rounded-xl hover:bg-indigo-600 hover:text-white transition-all duration-300" title={label}>{icon}</a>
 );
 
-const TechCategory = ({ title, items, icon }: { title: string; items: string; icon: React.ReactNode }) => (
+const TechCategory = ({
+  title,
+  items,
+  skills,
+  icon,
+  expanded,
+}: {
+  title: string;
+  items: string;
+  skills: string[];
+  icon: React.ReactNode;
+  expanded: boolean;
+}) => (
   <div className="bg-zinc-950/50 p-4 rounded-xl border border-zinc-800/50">
     <div className="flex items-center gap-2 mb-2 text-zinc-300 font-bold text-sm">{icon} {title}</div>
-    <div className="text-xs text-zinc-500 leading-relaxed">{items}</div>
+    {expanded ? (
+      <div className="flex flex-wrap gap-1.5">
+        {skills.map((skill) => (
+          <span
+            key={skill}
+            className="px-2 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-[11px] text-zinc-400"
+          >
+            {skill}
+          </span>
+        ))}
+      </div>
+    ) : (
+      <div className="text-xs text-zinc-500 leading-relaxed">{items}</div>
+    )}
   </div>
 );

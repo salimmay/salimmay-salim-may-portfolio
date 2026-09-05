@@ -24,7 +24,7 @@ import {
 } from "lucide-react";
 import dynamic from "next/dynamic";
 
-import { DATA } from "../../data";
+import { DATA, STATS, yearsBuilding } from "../../data";
 
 // The whole three.js bundle is dead weight until this layout is on screen, and
 // it can't render on the server at all, so keep it behind its own chunk.
@@ -40,13 +40,6 @@ const AvatarLoader = dynamic(() => import("../model/AvatarLoader"), {
   loading: () => null,
 });
 
-// ── Derived stats ───────────────────────────────────────────────────────────
-// Read off DATA rather than hard-coded, so the hero can't drift out of date
-// the next time a role or project is added.
-const START_YEAR = Math.min(
-  ...DATA.experience.map((role) => Number(role.date.slice(3, 7))).filter(Number.isFinite)
-);
-const TECH_COUNT = DATA.techStack.reduce((total, group) => total + group.skills.length, 0);
 // "Full Stack Developer & System Admin" → the two things worth cycling.
 const SPECIALISMS = DATA.personal.role.split("&").map((part) => part.trim());
 
@@ -349,9 +342,9 @@ function Hero() {
           transition={{ duration: 0.6, delay: 1.26, ease: EASE }}
           className="mt-14 flex gap-10 border-t border-slate-800/80 pt-7"
         >
-          <Stat value={`${DATA.projects.length}+`} label="Projects Shipped" />
-          <Stat value={`${new Date().getFullYear() - START_YEAR}+`} label="Years Building" />
-          <Stat value={`${TECH_COUNT}+`} label="Technologies" />
+          <Stat value={`${STATS.projects}+`} label="Projects Shipped" />
+          <Stat value={`${yearsBuilding()}+`} label="Years Building" />
+          <Stat value={`${STATS.technologies}+`} label="Technologies" />
         </motion.div>
 
         {/* Scroll cue — kept left, clear of the layout switcher at bottom centre */}

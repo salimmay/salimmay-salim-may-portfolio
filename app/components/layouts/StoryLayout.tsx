@@ -8,7 +8,7 @@ import {
   ArrowRight, LayoutGrid, Film, ZoomIn, BriefcaseIcon 
 } from "lucide-react";
 import { 
-  motion, useMotionTemplate, useMotionValue, AnimatePresence, useSpring 
+  motion, useMotionTemplate, useMotionValue, AnimatePresence, useSpring, useScroll 
 } from "framer-motion";
 import { DATA, type Project } from "../../data";
 
@@ -77,6 +77,19 @@ const ProjectDrawer = ({ project, onClose }: { project: Project; onClose: () => 
   const [viewMode, setViewMode] = useState<'scrapbook' | 'filmstrip'>('scrapbook');
   const [lightboxImg, setLightboxImg] = useState<string | null>(null);
 
+  // story carries real paragraph breaks, and rendering it in a single <p>
+  // collapsed them into a wall of text. Split them out, then thread the
+  // screenshots between paragraphs so this reads like an article instead of a
+  // blurb followed by a contact sheet. Whatever is left over stays in the
+  // gallery below, so no image appears twice.
+  const paragraphs = project.story
+    .split(/\n\s*\n/)
+    .map((part: string) => part.trim())
+    .filter(Boolean);
+  const allImages: string[] = project.images ?? [];
+  const inlineImages = allImages.slice(1, paragraphs.length);
+  const remainingImages = allImages.slice(1 + inlineImages.length);
+
   useEffect(() => {
     document.body.style.overflow = 'hidden';
     return () => { document.body.style.overflow = 'unset'; };
@@ -113,17 +126,48 @@ const ProjectDrawer = ({ project, onClose }: { project: Project; onClose: () => 
               {project.category}
             </span>
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-8 leading-tight">{project.title}</h2>
-            <div className="prose prose-invert prose-lg text-slate-300 mb-12">
-               <h3 className="text-white text-xl font-bold mb-4">The Story</h3>
-               <p className="leading-relaxed text-slate-400">{project.story}</p>
-               <p className="leading-relaxed text-slate-400 mt-4">{project.desc}</p>
+            <div className="mb-12 max-w-[68ch]">
+              <h3 className="text-white text-xl font-bold mb-6">The Story</h3>
+              {paragraphs.map((para: string, i: number) => (
+                <div key={i}>
+                  <p
+                    className={`text-lg leading-relaxed text-slate-400 ${
+                      i === 0
+                        ? "first-letter:float-left first-letter:mr-3 first-letter:mt-1 first-letter:text-6xl first-letter:font-bold first-letter:leading-[0.75] first-letter:text-blue-400"
+                        : "mt-6"
+                    }`}
+                  >
+                    {para}
+                  </p>
+
+                  {inlineImages[i] && (
+                    <figure className="my-9">
+                      <div
+                        className="relative aspect-[16/9] rounded-xl overflow-hidden border border-slate-800 bg-slate-950 cursor-zoom-in group"
+                        onClick={() => setLightboxImg(inlineImages[i])}
+                      >
+                        <Image
+                          src={inlineImages[i]}
+                          alt={`${project.title} screenshot ${i + 1}`}
+                          fill
+                          className="object-cover object-top transition-transform duration-700 group-hover:scale-105"
+                          sizes="(max-width: 768px) 100vw, 700px"
+                        />
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
+                          <ZoomIn className="text-white drop-shadow-md" size={28} />
+                        </div>
+                      </div>
+                    </figure>
+                  )}
+                </div>
+              ))}
             </div>
 
-            {project.images && project.images.length > 1 && (
+            {remainingImages.length > 0 && (
               <div className="mb-12">
                 <div className="flex items-center justify-between mb-6">
                    <h3 className="text-white text-sm font-bold uppercase tracking-widest flex items-center gap-2">
-                     <FolderGit2 size={16} className="text-blue-500"/> Project Gallery
+                     <FolderGit2 size={16} className="text-blue-500"/> More Screens
                    </h3>
                    <div className="flex p-1 bg-slate-800 rounded-lg border border-slate-700">
                      <button onClick={() => setViewMode('scrapbook')} className={`p-2 rounded-md transition-all ${viewMode === 'scrapbook' ? 'bg-slate-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'}`}><LayoutGrid size={16} /></button>
@@ -134,7 +178,7 @@ const ProjectDrawer = ({ project, onClose }: { project: Project; onClose: () => 
                 <AnimatePresence mode="wait">
                   {viewMode === 'scrapbook' ? (
                     <motion.div key="scrapbook" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="columns-2 gap-4 space-y-4">
-                      {project.images.slice(1).map((img: string, idx: number) => (
+                      {remainingImages.map((img: string, idx: number) => (
                         <div key={idx} className="break-inside-avoid relative group rounded-lg overflow-hidden border border-slate-800 bg-slate-950 cursor-zoom-in" onClick={() => setLightboxImg(img)}>
                           <Image src={img} alt="Scrapbook" width={600} height={400} className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" sizes="(max-width: 768px) 50vw, 300px" />
                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100"><ZoomIn className="text-white drop-shadow-md" size={24} /></div>
@@ -143,7 +187,7 @@ const ProjectDrawer = ({ project, onClose }: { project: Project; onClose: () => 
                     </motion.div>
                   ) : (
                     <motion.div key="filmstrip" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex gap-4 overflow-x-auto pb-4 pt-2 snap-x mandatory custom-scrollbar">
-                      {project.images.slice(1).map((img: string, idx: number) => (
+                      {remainingImages.map((img: string, idx: number) => (
                         <div key={idx} className="snap-center shrink-0 w-[85%] md:w-[70%] aspect-video relative rounded-lg overflow-hidden border border-slate-800 bg-slate-950 cursor-zoom-in group" onClick={() => setLightboxImg(img)}>
                           <Image src={img} alt="Filmstrip" fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="(max-width: 768px) 85vw, 400px" />
                           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100"><ZoomIn className="text-white drop-shadow-md" size={32} /></div>
@@ -172,10 +216,81 @@ const ProjectDrawer = ({ project, onClose }: { project: Project; onClose: () => 
   );
 };
 
+// --- READING RAIL ---
+// Five long sections with no sense of position. This marks where you are and
+// lets you jump. IntersectionObserver rather than a scroll handler, so it
+// costs nothing on the main thread while you read.
+const SECTIONS = [
+  { id: "about", label: "About" },
+  { id: "experience", label: "Experience" },
+  { id: "projects", label: "Projects" },
+  { id: "skills", label: "Skills" },
+  { id: "contact", label: "Contact" },
+];
+
+const ReadingRail = ({ onJump }: { onJump: (id: string) => void }) => {
+  const [active, setActive] = useState("about");
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const best = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (best) setActive(best.target.id);
+      },
+      // Only count a section once it reaches the middle band of the viewport.
+      { rootMargin: "-45% 0px -45% 0px", threshold: [0, 0.25, 0.5, 1] }
+    );
+
+    SECTIONS.forEach(({ id }) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div className="fixed left-6 top-1/2 -translate-y-1/2 z-40 hidden lg:flex flex-col gap-4">
+      {SECTIONS.map(({ id, label }) => (
+        <button
+          key={id}
+          onClick={() => onJump(id)}
+          className="group flex items-center gap-3"
+          aria-label={`Jump to ${label}`}
+        >
+          <span
+            className={`h-px transition-all duration-300 ${
+              active === id
+                ? "w-8 bg-blue-400"
+                : "w-4 bg-slate-700 group-hover:w-6 group-hover:bg-slate-500"
+            }`}
+          />
+          <span
+            className={`font-mono text-[10px] uppercase tracking-widest transition-colors ${
+              active === id ? "text-blue-400" : "text-slate-600 group-hover:text-slate-400"
+            }`}
+          >
+            {label}
+          </span>
+        </button>
+      ))}
+    </div>
+  );
+};
+
 // --- MAIN COMPONENT ---
 export default function StoryLayout() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeStory, setActiveStory] = useState<Project | null>(null);
+
+  const timelineRef = useRef<HTMLDivElement>(null);
+  // Fills the timeline beam as the experience section passes through view.
+  const { scrollYProgress: timelineProgress } = useScroll({
+    target: timelineRef,
+    offset: ["start 75%", "end 65%"],
+  });
+  const { scrollYProgress: pageProgress } = useScroll();
 
   const scrollTo = (id: string) => {
     const element = document.getElementById(id);
@@ -187,7 +302,14 @@ export default function StoryLayout() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-300 font-sans selection:bg-blue-500/30 overflow-x-hidden">
-      
+
+      {/* Reading position: how far through, and which section. */}
+      <motion.div
+        style={{ scaleX: pageProgress }}
+        className="fixed inset-x-0 top-0 z-50 h-[2px] origin-left bg-gradient-to-r from-blue-500 via-cyan-400 to-violet-500"
+      />
+      <ReadingRail onJump={scrollTo} />
+
       {/* NAVIGATION with Magnetic Buttons */}
       <nav className="fixed top-0 left-0 right-0 z-40 bg-slate-950/80 backdrop-blur-md border-b border-slate-800/50">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
@@ -281,15 +403,32 @@ export default function StoryLayout() {
             </h2>
           </FadeIn>
 
-          <div className="space-y-12 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-slate-700 before:to-transparent">
+          <div ref={timelineRef} className="space-y-12 relative">
+            {/* Static rail, with a beam that fills as you scroll past it. */}
+            <div className="absolute inset-y-0 left-5 -translate-x-px w-0.5 md:left-1/2 md:-translate-x-1/2 bg-slate-800" />
+            <motion.div
+              style={{ scaleY: timelineProgress }}
+              className="absolute inset-y-0 left-5 -translate-x-px w-0.5 origin-top md:left-1/2 md:-translate-x-1/2 bg-gradient-to-b from-blue-400 via-blue-500 to-violet-500 shadow-[0_0_12px_rgba(59,130,246,0.6)]"
+            />
+
             {DATA.experience.map((job, idx) => (
               <FadeIn key={idx} delay={idx * 0.1}>
                 <TimelineItem index={idx} role={job.role} company={job.company} date={job.date} stack={job.stack}>
-                  <ul className="list-disc list-inside space-y-2 text-slate-400">
+                  {/* Indexed rows rather than a bulleted list — reads as a log,
+                      and matches the other two layouts. */}
+                  <div className="space-y-px">
                     {job.achievements.map((achievement, i) => (
-                      <li key={i}>{achievement}</li>
+                      <div
+                        key={achievement}
+                        className="flex gap-4 border-l border-slate-800 py-2 pl-5 transition-colors hover:border-blue-500/50"
+                      >
+                        <span className="shrink-0 pt-0.5 font-mono text-[11px] text-slate-600">
+                          {String(i + 1).padStart(2, "0")}
+                        </span>
+                        <p className="text-sm leading-relaxed text-slate-400">{achievement}</p>
+                      </div>
                     ))}
-                  </ul>
+                  </div>
                 </TimelineItem>
               </FadeIn>
             ))}
