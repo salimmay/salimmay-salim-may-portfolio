@@ -1,25 +1,48 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import SeoContent from "./components/SeoContent";
+import { META_DESCRIPTION, META_TITLE, OG_ALT, SITE_URL, buildSchema } from "./lib/seo";
 
 export const metadata: Metadata = {
-    metadataBase: new URL("https://salim-may-portfolio.vercel.app/"),
+    metadataBase: new URL(SITE_URL),
 
-    title: "Salim May - Portfolio & Blog",
-    description: "Business Information Systems Graduate specializing in System Administration, Web Development, and Creative Design.",
-    keywords: ["web development", "portfolio", "blog", "system administration", "creative design", "Salim May"],
-    authors: [{ name: "Salim May" }],
+    title: META_TITLE,
+    description: META_DESCRIPTION,
+    // `keywords` is deliberately gone: Google has ignored it since 2009, and the
+    // old list ("blog") described a section that doesn't exist on this site.
+    authors: [{ name: "Salim May", url: SITE_URL }],
+    creator: "Salim May",
+    alternates: {
+        canonical: "/",
+    },
+    robots: {
+        index: true,
+        follow: true,
+        googleBot: { index: true, follow: true, "max-image-preview": "large" },
+    },
     openGraph: {
-        title: "Salim May - Portfolio & Blog",
-        description: "Business Information Systems Graduate specializing in System Administration, Web Development, and Creative Design.",
-        type: "website",
+        title: META_TITLE,
+        description: META_DESCRIPTION,
+        url: SITE_URL,
+        siteName: "Salim May",
+        locale: "en_US",
+        type: "profile",
         images: [
             {
                 url: "/me.png",
-                width: 1200,
-                height: 630,
-                alt: "Salim May Portfolio",
+                // The real pixel size of the file. It was declared 1200x630,
+                // which made social cards crop straight through the face.
+                width: 1024,
+                height: 1536,
+                alt: OG_ALT,
             },
         ],
+    },
+    twitter: {
+        card: "summary_large_image",
+        title: META_TITLE,
+        description: META_DESCRIPTION,
+        images: [{ url: "/me.png", alt: OG_ALT }],
     },
 };
 
@@ -41,8 +64,15 @@ export default function RootLayout({
                         __html: `if("scrollRestoration" in history)history.scrollRestoration="manual";`,
                     }}
                 />
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{ __html: JSON.stringify(buildSchema()) }}
+                />
             </head>
             <body className={`bg-slate-950 text-slate-300 antialiased selection:bg-blue-500/30 selection:text-white`}>
+                {/* Server-rendered, so it is in the HTML every crawler receives —
+                    see the note in SeoContent.tsx for why that matters here. */}
+                <SeoContent />
                 {children}
             </body>
         </html>

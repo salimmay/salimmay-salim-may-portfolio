@@ -11,6 +11,7 @@ import {
   motion, useMotionTemplate, useMotionValue, AnimatePresence, useSpring, useScroll 
 } from "framer-motion";
 import { DATA, type Project } from "../../data";
+import { altFor } from "../../lib/seo";
 
 // --- 1. MAGNETIC NAV ITEM ---
 const MagneticNav = ({ children, onClick, className }: { children: React.ReactNode; onClick?: () => void; className?: string }) => {
@@ -66,7 +67,7 @@ const Lightbox = ({ src, onClose }: { src: string, onClose: () => void }) => {
         className="relative w-full h-full max-w-5xl max-h-[85vh]"
         onClick={(e) => e.stopPropagation()}
       >
-        <Image src={src} alt="Full screen" fill className="object-contain" sizes="100vw" />
+        <Image src={src} alt={altFor(src)} fill className="object-contain" sizes="100vw" />
       </motion.div>
     </motion.div>
   );
@@ -111,7 +112,7 @@ const ProjectDrawer = ({ project, onClose }: { project: Project; onClose: () => 
         <div className="flex-1 overflow-y-auto custom-scrollbar">
           <div className="relative w-full h-64 md:h-80 bg-slate-800 shrink-0">
              {project.images && project.images.length > 0 ? (
-               <Image src={project.images[0]} alt={project.title} fill className="object-cover" sizes="(max-width: 768px) 100vw, 700px" />
+               <Image src={project.images[0]} alt={altFor(project.images[0], project.title)} fill className="object-cover" sizes="(max-width: 768px) 100vw, 700px" />
              ) : (
                <div className="absolute inset-0 flex items-center justify-center text-slate-600">No Image</div>
              )}
@@ -148,7 +149,7 @@ const ProjectDrawer = ({ project, onClose }: { project: Project; onClose: () => 
                       >
                         <Image
                           src={inlineImages[i]}
-                          alt={`${project.title} screenshot ${i + 1}`}
+                          alt={altFor(inlineImages[i], project.title)}
                           fill
                           className="object-cover object-top transition-transform duration-700 group-hover:scale-105"
                           sizes="(max-width: 768px) 100vw, 700px"
@@ -180,7 +181,7 @@ const ProjectDrawer = ({ project, onClose }: { project: Project; onClose: () => 
                     <motion.div key="scrapbook" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="columns-2 gap-4 space-y-4">
                       {remainingImages.map((img: string, idx: number) => (
                         <div key={idx} className="break-inside-avoid relative group rounded-lg overflow-hidden border border-slate-800 bg-slate-950 cursor-zoom-in" onClick={() => setLightboxImg(img)}>
-                          <Image src={img} alt="Scrapbook" width={600} height={400} className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" sizes="(max-width: 768px) 50vw, 300px" />
+                          <Image src={img} alt={altFor(img, project.title)} width={600} height={400} className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" sizes="(max-width: 768px) 50vw, 300px" />
                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100"><ZoomIn className="text-white drop-shadow-md" size={24} /></div>
                         </div>
                       ))}
@@ -189,7 +190,7 @@ const ProjectDrawer = ({ project, onClose }: { project: Project; onClose: () => 
                     <motion.div key="filmstrip" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex gap-4 overflow-x-auto pb-4 pt-2 snap-x mandatory custom-scrollbar">
                       {remainingImages.map((img: string, idx: number) => (
                         <div key={idx} className="snap-center shrink-0 w-[85%] md:w-[70%] aspect-video relative rounded-lg overflow-hidden border border-slate-800 bg-slate-950 cursor-zoom-in group" onClick={() => setLightboxImg(img)}>
-                          <Image src={img} alt="Filmstrip" fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="(max-width: 768px) 85vw, 400px" />
+                          <Image src={img} alt={altFor(img, project.title)} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="(max-width: 768px) 85vw, 400px" />
                           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100"><ZoomIn className="text-white drop-shadow-md" size={32} /></div>
                         </div>
                       ))}
@@ -359,7 +360,7 @@ export default function StoryLayout() {
         <FadeIn className="max-w-4xl mx-auto text-center relative z-10">
           <div className="relative w-32 h-32 md:w-40 md:h-40 mx-auto mb-8">
             <div className="relative w-full h-full rounded-full overflow-hidden border-4 border-slate-800 shadow-xl">
-              <Image src="/me.png" alt="Salim May" fill className="object-cover object-top" priority />
+              <Image src="/me.png" alt={altFor("/me.png")} fill className="object-cover object-top" priority />
             </div>
           </div>
           

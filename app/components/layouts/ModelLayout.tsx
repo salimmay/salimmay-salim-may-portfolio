@@ -25,6 +25,7 @@ import {
 import dynamic from "next/dynamic";
 
 import { DATA, STATS, yearsBuilding } from "../../data";
+import { altFor } from "../../lib/seo";
 
 // The whole three.js bundle is dead weight until this layout is on screen, and
 // it can't render on the server at all, so keep it behind its own chunk.
@@ -572,7 +573,7 @@ function ProjectGallery({
           >
             <Image
               src={current}
-              alt={`${title} — screenshot ${index + 1}`}
+              alt={altFor(current, title)}
               fill
               className="object-cover object-top"
               sizes="(max-width: 768px) 100vw, 620px"
@@ -622,7 +623,7 @@ function ProjectGallery({
                   : "border-slate-800 opacity-55 hover:opacity-90"
               }`}
             >
-              <Image src={img} alt="" fill className="object-cover object-top" sizes="80px" />
+              <Image src={img} alt={altFor(img, title)} fill className="object-cover object-top" sizes="80px" />
             </button>
           ))}
         </div>
@@ -803,7 +804,7 @@ function Lightbox({ src, onClose }: { src: string | null; onClose: () => void })
             transition={{ duration: 0.25, ease: EASE }}
             className="relative h-full w-full"
           >
-            <Image src={src} alt="Project screenshot" fill className="object-contain" sizes="100vw" />
+            <Image src={src} alt={altFor(src)} fill className="object-contain" sizes="100vw" />
           </motion.div>
         </motion.div>
       )}

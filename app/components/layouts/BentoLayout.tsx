@@ -13,7 +13,8 @@ import {
   motion, Variants, AnimatePresence, 
   useMotionValue, useTransform, useMotionTemplate, useSpring 
 } from "framer-motion";
-import { DATA, STATS, yearsBuilding, type Project } from "../../data"; 
+import { DATA, STATS, yearsBuilding, type Project } from "../../data";
+import { altFor } from "../../lib/seo"; 
 import ContributionGraph from "../ContributionGraph";
 
 // Never emits — the snapshot differs per environment, not over time.
@@ -261,14 +262,14 @@ const ProjectModal = ({ project, onClose }: { project: Project; onClose: () => v
                    >
                      <Image 
                        src={project.images[currentImg]} 
-                       alt={`${project.title} slide ${currentImg}`}
+                       alt={altFor(project.images[currentImg], project.title)}
                        fill
                        className="object-contain"
                        priority
                      />
                      <Image 
                        src={project.images[currentImg]} 
-                       alt="blur-bg"
+                       alt="" aria-hidden="true"
                        fill
                        className="object-cover -z-10 opacity-20 blur-3xl scale-110"
                      />
@@ -305,7 +306,7 @@ const ProjectModal = ({ project, onClose }: { project: Project; onClose: () => v
                      onClick={(e) => { e.stopPropagation(); setCurrentImg(idx); }}
                      className={`relative w-20 h-14 shrink-0 rounded-md overflow-hidden border transition-all ${idx === currentImg ? 'border-indigo-500 ring-2 ring-indigo-500/30' : 'border-zinc-800 opacity-60 hover:opacity-100'}`}
                    >
-                     <Image src={img} alt="thumb" fill className="object-cover" />
+                     <Image src={img} alt={altFor(img, project.title)} fill className="object-cover" />
                    </button>
                  ))}
                </div>
@@ -416,7 +417,7 @@ export default function BentoLayout() {
               <div className="relative h-full min-h-[300px]">
                 <Image 
                   src="/me.png" 
-                  alt="Salim May" 
+                  alt={altFor("/me.png")} 
                   fill 
                   className="object-cover object-top hover:scale-105 transition-transform duration-700"
                 />
