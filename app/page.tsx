@@ -2,18 +2,23 @@
 
 import React, { useState, useEffect } from "react";
 import { AnimatePresence, motion, useMotionTemplate, useMotionValue } from "framer-motion";
-import { BookOpen, LayoutGrid } from "lucide-react";
+import { BookOpen, LayoutGrid, Box } from "lucide-react";
+import dynamic from "next/dynamic";
 
 // Make sure these paths match where you saved your layout files
 import StoryLayout from "./components/layouts/StoryLayout"; 
 import BentoLayout from "./components/layouts/BentoLayout";
+// 3D relies on WebGL/canvas — load client-only, never during SSR/build.
+const ModelLayout = dynamic(() => import("./components/layouts/ModelLayout"), {
+  ssr: false,
+  loading: () => <div className="h-screen w-full bg-slate-950" />,
+});
 
 // Shared Effect Component
 import Cursor from "./components/Cursor";
 import StatusBar from "./components/StatusBar";
 import MatrixRain from "./components/MatrixRain"; 
-import BootScreen from "./components/BootScreen";
-type LayoutType = 'story' | 'bento';
+type LayoutType = 'model' | 'story' | 'bento';
 
 // --- 1. GLOBAL SPOTLIGHT COMPONENT ---
 const SpotlightBackground = () => {
@@ -47,13 +52,13 @@ const SpotlightBackground = () => {
 
 // --- MAIN ROUTER COMPONENT ---
 export default function PortfolioRouter() {
-  const [currentLayout, setCurrentLayout] = useState<LayoutType>('story');
+  const [currentLayout, setCurrentLayout] = useState<LayoutType>('model');
   const [mounted, setMounted] = useState(false);
 
   // Handle Hydration & Persistence
   useEffect(() => {
     const savedLayout = localStorage.getItem('portfolio-pref') as LayoutType;
-    if (savedLayout && (savedLayout === 'story' || savedLayout === 'bento')) {
+    if (savedLayout && (savedLayout === 'story' || savedLayout === 'bento' || savedLayout === 'model')) {
       setCurrentLayout(savedLayout);
     }
     setMounted(true);
@@ -72,7 +77,6 @@ export default function PortfolioRouter() {
     <main className="relative min-h-screen bg-slate-950 text-slate-300 selection:bg-blue-500/30 overflow-x-hidden">
       
       {/* 1. Global Spotlight and Cursor */}
-      <BootScreen />
       <MatrixRain />
       <Cursor />
       <SpotlightBackground />
@@ -86,6 +90,12 @@ export default function PortfolioRouter() {
             onClick={() => switchLayout('story')} 
             icon={<BookOpen size={14} />} 
             label="Story" 
+          />
+          <ToggleButton 
+            isActive={currentLayout === 'model'} 
+            onClick={() => switchLayout('model')} 
+            icon={<Box size={14} />} 
+            label="3D" 
           />
           <ToggleButton 
             isActive={currentLayout === 'bento'} 
@@ -109,6 +119,23 @@ export default function PortfolioRouter() {
             className="relative z-10"
           >
             <StoryLayout />
+          </motion.div>
+        )}
+
+        {currentLayout === 'model' && (
+          <motion.div 
+            key="model"
+            // Opacity only, deliberately: a transform (or a filter) on this
+            // wrapper would make it the containing block for the layout's
+            // position:fixed 3-D stage, which would then size itself to the
+            // whole page instead of the viewport.
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+            className="relative z-10"
+          >
+            <ModelLayout />
           </motion.div>
         )}
 

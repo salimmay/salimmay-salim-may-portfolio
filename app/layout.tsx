@@ -14,7 +14,7 @@ export const metadata: Metadata = {
         type: "website",
         images: [
             {
-                url: "/me.jpg",
+                url: "/me.png",
                 width: 1200,
                 height: 630,
                 alt: "Salim May Portfolio",

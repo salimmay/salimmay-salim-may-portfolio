@@ -19,6 +19,32 @@ export const DATA = {
   },
   experience: [
     {
+      role: "Visual Designer → Full Stack Developer",
+      company: "Terkina (Freelance)",
+      date: "05/2022 - Present",
+      desc: "A four-year freelance relationship that grew from high-volume retouching into designing and shipping the agency's platform and CRM.",
+      achievements: [
+        "Retouched and colour-corrected 2000+ images per project, holding brand consistency across high-volume workflows on tight deadlines.",
+        "Worked directly with creative directors on visual strategy, which later shaped how the platform presents their work.",
+        "Designed and built the public platform: a WebGL product marketplace streaming .glb models through React Three Fiber, alongside a 360° orbital gallery.",
+        "Built the admin CRM behind it — live KPI metrics, drag-and-drop gallery ordering, stock and price controls, and site content editing with on-demand ISR revalidation.",
+        "Hardened and shipped it to production: strict CSP, IP-based edge rate limiting, Zod validation, Supabase row-level security, and EN/FR/AR with RTL layout support."
+      ],
+      stack: ["Next.js", "TypeScript", "Supabase", "React Three Fiber", "Cloudinary", "Photoshop", "Lightroom", "Premiere Pro"]
+    },
+    {
+      role: "Multimedia Designer",
+      company: "Unilumin",
+      date: "01/2026 - 05/2026",
+      desc: "Built the initial platform from scratch and later re-architected the core into a multi-vertical SaaS Ecosystem.",
+      achievements: [
+        "Produced immersive 3D naked-eye visual simulations for showroom LED screens, tailored to specific client environments and presented in high-stakes pitches.",
+        "Designed product catalogs, promotional posters, and AI-generated imagery that directly supported the sales team in closing client deals.",
+        "Built and launched the company website from scratch, establishing a modern and cohesive digital brand identity"
+      ],
+      stack: ["Blender", "Photoshop", "After Effects"]
+    },
+    {
       role: "Full Stack Developer",
       company: "Fiesta App",
       date: "06/2025 - 12/2025",
@@ -43,18 +69,7 @@ export const DATA = {
       ],
       stack: ["MERN Stack", "React", "Node.js"]
     },
-    {
-      role: "Photo Editor",
-      company: "Terkina",
-      date: "05/2022 - 08/2025",
-      desc: "Retouched and color-corrected 2000+ images per project ensuring brand consistency.",
-      achievements: [
-        "Retouched 2000+ images ensuring brand consistency.",
-        "Managed high-volume workflows under tight deadlines.",
-        "Collaborated with creative directors on visual strategy."
-      ],
-      stack: ["Photoshop", "Lightroom"]
-    },
+
     {
       role: "Brand Ambassador",
       company: "NextWave",
@@ -69,6 +84,26 @@ export const DATA = {
   ],
   projects: [
     {
+      id: "terkina",
+      title: "Terkina",
+      category: "Agency Platform & CRM",
+      tag: "Platform",
+      desc: "A hybrid visual-media and 3D engineering platform for a creative agency, with a custom CRM the team runs the entire public site from.",
+      story: "Terkina had to do two things that usually pull against each other: be a showpiece for a visual agency, and be something non-technical staff could actually operate day to day. The public side leans hard on WebGL — a 360 orbital gallery carousel, and a real-time 3D marketplace that streams .glb models through React Three Fiber with finish and colour switchers, contact shadows and cursor-driven rim lighting.\n\nBehind it sits the admin CRM. Live KPI metrics off the database, drag-and-drop gallery reordering with dnd-kit, per-item price visibility and stock toggles, and a content editor that changes the WhatsApp dispatch number, agency email and homepage counters without a redeploy — backed by an on-demand ISR revalidation route so the cache purges the moment something is published. Orders leave through one-click WhatsApp dispatch that quietly persists the lead first, so nothing is lost if the hand-off fails.\n\nThe hardening was its own piece of work: strict Content Security Policy, anti-clickjacking headers, IP-based edge rate limiting, Unicode-safe Zod validation and Supabase row-level security. It ships in English, French and Arabic, with the layout flipping to RTL without a page reload.",
+      tech: ["Next.js", "React 19", "TypeScript", "Supabase", "React Three Fiber", "Cloudinary", "Zod"],
+      color: "bg-amber-500/10 text-amber-500 border-amber-500/20",
+      images: [
+        "/Terkina/Home.png",
+        "/Terkina/Album.png",
+        "/Terkina/Orbit.png",
+        "/Terkina/Marketplace.png",
+        "/Terkina/3d.png",
+        "/Terkina/admin.png",
+        "/Terkina/crm.png",
+      ],
+    },
+    
+    {
       id: "fiesta",
       title: "Fiesta App",
       category: "SaaS Ecosystem",
@@ -78,6 +113,7 @@ export const DATA = {
       tech: ["React", "Node.js", "MongoDB", "Redux Toolkit", "Puppeteer", "Cloudinary"],
       color: "bg-pink-500/10 text-pink-500 border-pink-500/20",
       images: [
+        "/Fiesta/Home.png",
         "/Fiesta/dashboard.png",
         "/Fiesta/contract.png",
         "/Fiesta/event.png",
@@ -136,21 +172,22 @@ export const DATA = {
         "/CuisineIQ/PhoneMenu.jpg",
         "/CuisineIQ/PhoneOrder.jpg"
       ],
+      ExternalLink: "https://addons.mozilla.org/en-US/firefox/addon/zen-history/",
+      link: "https://github.com/salimmay/zen-history",
     },
     {
-      id: "StajNet",
-      title: "StajNet",
-      category: "Enterprise Web App",
-      tag: "Enterprise",
-      desc: "Official recruitment portal developed for the national airline.",
-      story: "Handling sensitive data for a national entity requires rigorous security. I streamlined the internship application process by digitizing workflows and building a secure backend for handling candidate documents, reducing the HR processing time significantly.",
-      tech: ["MERN Stack", "Secure Uploads", "Admin Panel", "Data Filtering"],
+      id: "zen-history",
+      title: "Zen History",
+      category: " Web Extension",
+      tag: "Productivity",
+      desc: "An innovative Firefox extension designed to revolutionize your web browsing habits. By leveraging advanced time-tracking algorithms, Zen History provides users with deep insights into their digital consumption, helping them cultivate healthier online behaviors and make more intentional use of their screen time.",
+      story: "I designed Zen History to serve as a sophisticated digital wellness tool. Its core feature is a real-time analytics engine that tracks and categorizes browsing activity, providing users with a clear visual breakdown of their time spent across different categories. To encourage mindful usage, I implemented a dynamic AI-driven 'Reflector' that analyzes these patterns and generates personalized, actionable insights. Additionally, the extension includes a 'Time Capsule' feature, allowing users to set future goals and review their progress over time, transforming passive screen time into a conscious journey of self-improvement.",
+      tech: ["Firefox Extension API", "Chart.js", "JavaScript", "HTML", "CSS"],
       color: "bg-blue-500/10 text-blue-500 border-blue-500/20",
       images: [
-        "/StajNet/Home.png",
-        "/StajNet/Dashboard.png",
-        "/StajNet/Offers.png",
-        "/StajNet/Workshops.png"
+        "/Zen/history.png",
+        "/Zen/time-wasted.png",
+        "/Zen/zen-reflections.png"
       ]
     },
     {

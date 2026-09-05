@@ -197,10 +197,6 @@ const ProjectDrawer = ({ project, onClose }: { project: any, onClose: () => void
             </div>
           </div>
         </div>
-        <div className="p-6 border-t border-slate-800 bg-slate-900 sticky bottom-0 flex gap-4 shrink-0 z-20">
-          <a href="#" className="flex-1 flex items-center justify-center gap-2 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-colors font-bold shadow-lg shadow-blue-900/20">Live Demo <ExternalLink size={16} /></a>
-          <a href="#" className="flex-1 flex items-center justify-center gap-2 py-3 bg-slate-800 hover:bg-slate-700 text-white rounded-lg transition-colors font-bold border border-slate-700">Code <Github size={16} /></a>
-        </div>
       </motion.div>
       <AnimatePresence>
         {lightboxImg && <Lightbox src={lightboxImg} onClose={() => setLightboxImg(null)} />}
@@ -297,7 +293,7 @@ export default function StoryLayout() {
             <button onClick={() => scrollTo("contact")} className="px-8 py-3 bg-blue-600 text-white rounded-full font-medium hover:bg-blue-500 transition-all shadow-lg shadow-blue-500/25">
               Get in Touch
             </button>
-            <a href="/salimmay.pdf" download className="px-8 py-3 bg-slate-800 text-white rounded-full font-medium hover:bg-slate-700 transition-all flex items-center gap-2 border border-slate-700">
+            <a href="/Salimmay.pdf" download className="px-8 py-3 bg-slate-800 text-white rounded-full font-medium hover:bg-slate-700 transition-all flex items-center gap-2 border border-slate-700">
               <Download size={18} /> Download Resume
             </a>
           </div>
