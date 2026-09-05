@@ -1,7 +1,23 @@
-import {
-  Monitor, Server, Database, Terminal,
-  Code, Layers, Cpu
-} from "lucide-react";
+import { Server, Terminal, Code, Layers } from "lucide-react";
+
+/**
+ * Shape of an entry in DATA.projects. Declared explicitly rather than inferred,
+ * so the layouts can type their props against it instead of falling back to
+ * `any`. link / ExternalLink are optional because only some projects have them.
+ */
+export type Project = {
+  id: string;
+  title: string;
+  category: string;
+  tag: string;
+  desc: string;
+  story: string;
+  tech: string[];
+  color: string;
+  images: string[];
+  link?: string;
+  ExternalLink?: string;
+};
 
 export const DATA = {
   personal: {

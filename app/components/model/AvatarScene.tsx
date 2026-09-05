@@ -106,6 +106,15 @@ function Avatar({
     scene.traverse((obj) => {
       const mesh = obj as THREE.Mesh;
       if (!(mesh as unknown as { isMesh?: boolean }).isMesh) return;
+      // Never cull this model. three.js culls a SkinnedMesh against a bounding
+      // sphere derived from BIND-POSE geometry, and this rig's bind pose is Z-up
+      // while the clip stands the character on Y — so all five spheres sit on the
+      // wrong axis entirely. The head mesh has the smallest radius (0.13) and is
+      // therefore the first to fall outside the frustum, which is why it vanished
+      // on wide viewports and not narrow ones. Five meshes is nothing to draw, so
+      // skipping the check outright beats trying to keep the bounds honest.
+      mesh.frustumCulled = false;
+
       const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
       mats.forEach((m) => {
         const mat = m as THREE.MeshStandardMaterial;

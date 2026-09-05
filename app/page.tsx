@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useSyncExternalStore } from "react";
 import { AnimatePresence, motion, useMotionTemplate, useMotionValue } from "framer-motion";
 import { BookOpen, LayoutGrid, Box } from "lucide-react";
 import dynamic from "next/dynamic";
@@ -50,25 +50,43 @@ const SpotlightBackground = () => {
   );
 };
 
+// Never emits — the snapshot differs per environment, not over time.
+const subscribeNever = () => () => {};
+
 // --- MAIN ROUTER COMPONENT ---
 export default function PortfolioRouter() {
   const [currentLayout, setCurrentLayout] = useState<LayoutType>('model');
-  const [mounted, setMounted] = useState(false);
+  // Hydration gate, done without setState-in-an-effect (which triggers a second
+  // cascading render and is flagged by react-hooks/set-state-in-effect). The
+  // server snapshot is false and the client snapshot is true, so React flips
+  // this once — and only once — when hydration finishes.
+  const mounted = useSyncExternalStore(subscribeNever, () => true, () => false);
 
-  // Handle Hydration & Persistence
+  // Every visit opens on the 3D hero. The layout used to be restored from
+  // localStorage, which meant anyone who once clicked Story never saw the hero
+  // again — the showcase quietly turned itself off for returning visitors.
+  // The toggle still switches freely; the choice just isn't remembered.
   useEffect(() => {
-    const savedLayout = localStorage.getItem('portfolio-pref') as LayoutType;
-    if (savedLayout && (savedLayout === 'story' || savedLayout === 'bento' || savedLayout === 'model')) {
-      setCurrentLayout(savedLayout);
+    // The browser restores the previous scroll offset on reload. ModelLayout is
+    // client-side only, so the document is one screen tall at that moment and
+    // several screens tall a beat later — the restore then lands somewhere
+    // arbitrary, which is how a reload could drop you into the projects section.
+    // Belt and braces — the inline script in the root layout is what
+    // actually wins the race, but this covers client-side navigations.
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
     }
-    setMounted(true);
+    // 'instant' matters: <html> carries scroll-smooth, so a plain scrollTo(0,0)
+    // animates, and an animating scroll loses to the page still growing.
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
   }, []);
 
   const switchLayout = (layout: LayoutType) => {
     setCurrentLayout(layout);
-    localStorage.setItem('portfolio-pref', layout);
-    // Optional: Scroll to top on switch for a fresh start
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Jump rather than smooth-scroll: the outgoing layout unmounts underneath
+    // the animation, so a smooth scroll finishes against a document that no
+    // longer has the height it started with.
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
   };
 
   if (!mounted) return <div className="min-h-screen bg-slate-950" />;

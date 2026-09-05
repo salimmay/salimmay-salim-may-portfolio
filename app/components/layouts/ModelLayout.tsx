@@ -33,6 +33,13 @@ const AvatarScene = dynamic(() => import("../model/AvatarScene"), {
   loading: () => null,
 });
 
+// Shares the drei chunk with AvatarScene, so this costs no extra download — it
+// just can't be in the server bundle, since it reads three.js's loading manager.
+const AvatarLoader = dynamic(() => import("../model/AvatarLoader"), {
+  ssr: false,
+  loading: () => null,
+});
+
 // ── Derived stats ───────────────────────────────────────────────────────────
 // Read off DATA rather than hard-coded, so the hero can't drift out of date
 // the next time a role or project is added.
@@ -84,7 +91,7 @@ function SectionHeading({ index, title, kicker }: { index: string; title: string
   return (
     <Reveal className="mb-12 md:mb-16">
       <p className="font-mono text-xs tracking-[0.25em] text-blue-400">
-        /// {index} — {title.toUpperCase()}
+        {"///"} {index} — {title.toUpperCase()}
       </p>
       {kicker && (
         <h2 className="mt-4 max-w-2xl text-3xl font-bold leading-tight text-white md:text-5xl">{kicker}</h2>
@@ -289,7 +296,7 @@ function Hero() {
           transition={{ duration: 0.6, delay: 0.9, ease: EASE }}
           className="mt-6 flex h-8 items-center gap-3 overflow-hidden font-mono text-base text-slate-300 md:text-xl"
         >
-          <span className="text-slate-600">//</span>
+          <span className="text-slate-600">{"//"}</span>
           <AnimatePresence mode="wait">
             <motion.span
               key={specialism}
@@ -310,7 +317,7 @@ function Hero() {
           transition={{ duration: 0.6, delay: 1.02, ease: EASE }}
           className="mt-7 max-w-lg font-mono text-sm leading-relaxed text-slate-400"
         >
-          <span className="text-emerald-500">/* </span>
+          <span className="text-emerald-500">{"/* "}</span>
           {DATA.personal.bio}
           <span className="text-emerald-500"> */</span>
         </motion.p>
@@ -370,7 +377,7 @@ function Stat({ value, label }: { value: string; label: string }) {
   return (
     <div>
       <p className="text-2xl font-bold text-white md:text-3xl">{value}</p>
-      <p className="mt-1 font-mono text-[11px] text-slate-500">// {label}</p>
+      <p className="mt-1 font-mono text-[11px] text-slate-500">{"//"} {label}</p>
     </div>
   );
 }
@@ -754,7 +761,7 @@ function Contact() {
 
       <Reveal i={3}>
         <p className="mt-20 border-t border-slate-800/80 pt-8 font-mono text-xs text-slate-600">
-          // {DATA.personal.name} — {DATA.personal.location}
+          {"//"} {DATA.personal.name} — {DATA.personal.location}
         </p>
       </Reveal>
     </section>
@@ -836,6 +843,9 @@ export default function ModelLayout() {
 
   return (
     <div className="relative">
+      {/* Sits above the whole page until avatar.glb has actually landed. */}
+      <AvatarLoader />
+
       {/* Scroll progress */}
       <motion.div
         style={{ scaleX: pageProgress }}

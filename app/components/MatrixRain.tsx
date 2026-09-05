@@ -6,29 +6,32 @@ import { motion, AnimatePresence } from "framer-motion";
 export default function MatrixRain() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isActive, setIsActive] = useState(false);
-  const [inputSequence, setInputSequence] = useState("");
+  // Kept in a ref rather than state: nothing renders it, and as state it
+  // re-rendered this component on every keypress anywhere on the page.
+  const sequenceRef = useRef("");
 
-  // 1. Detect "SUDO" typing
+  // 1. Detect "SUDO" typing. Activation happens here, in the event handler,
+  // rather than in an effect reacting to the sequence changing.
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      const char = e.key.toLowerCase();
-      // Keep only last 4 chars
-      setInputSequence((prev) => (prev + char).slice(-4));
+      sequenceRef.current = (sequenceRef.current + e.key.toLowerCase()).slice(-4);
+      if (sequenceRef.current === "sudo") {
+        sequenceRef.current = "";
+        setIsActive(true);
+      }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
+  // Turn off after 5 seconds. The previous version called setTimeout without
+  // ever clearing it, so unmounting mid-run left a timer firing at a component
+  // that no longer existed.
   useEffect(() => {
-    if (inputSequence === "sudo") {
-      setIsActive(true);
-      // Turn off after 5 seconds
-      setTimeout(() => {
-        setIsActive(false); 
-        setInputSequence("");
-      }, 5000);
-    }
-  }, [inputSequence]);
+    if (!isActive) return;
+    const id = window.setTimeout(() => setIsActive(false), 5000);
+    return () => window.clearTimeout(id);
+  }, [isActive]);
 
   // 2. Canvas Logic
   useEffect(() => {

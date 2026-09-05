@@ -4,16 +4,16 @@ import React, { useState, MouseEvent, useEffect, useRef } from "react";
 import Image from "next/image";
 import {
   Github, Linkedin, Mail, MapPin, Phone, Download,
-  Code, Database, Terminal, Layers, Menu, X, FolderGit2,
-  ArrowRight, ExternalLink, LayoutGrid, Film, ZoomIn, BriefcaseIcon, Cpu 
+  Terminal, Menu, X, FolderGit2,
+  ArrowRight, LayoutGrid, Film, ZoomIn, BriefcaseIcon 
 } from "lucide-react";
 import { 
-  motion, useMotionTemplate, useMotionValue, AnimatePresence, useSpring, useTransform 
+  motion, useMotionTemplate, useMotionValue, AnimatePresence, useSpring 
 } from "framer-motion";
-import { DATA } from "../../data";
+import { DATA, type Project } from "../../data";
 
 // --- 1. MAGNETIC NAV ITEM ---
-const MagneticNav = ({ children, onClick, className }: any) => {
+const MagneticNav = ({ children, onClick, className }: { children: React.ReactNode; onClick?: () => void; className?: string }) => {
   const ref = useRef<HTMLButtonElement>(null);
   
   const x = useMotionValue(0);
@@ -50,39 +50,6 @@ const MagneticNav = ({ children, onClick, className }: any) => {
   );
 };
 
-// --- 2. HYPERTEXT ANIMATION ---
-const HyperText = ({ text, className = "" }: { text: string, className?: string }) => {
-  const [displayText, setDisplayText] = useState(text);
-  const alphabets = "ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+";
-
-  const triggerAnimation = () => {
-    let iteration = 0;
-    const interval = setInterval(() => {
-      setDisplayText((prev) =>
-        prev
-          .split("")
-          .map((letter, index) => {
-            if (index < iteration) return text[index];
-            return alphabets[Math.floor(Math.random() * 26)];
-          })
-          .join("")
-      );
-      if (iteration >= text.length) clearInterval(interval);
-      iteration += 1 / 3;
-    }, 30);
-  };
-
-  useEffect(() => {
-    triggerAnimation();
-  }, [text]);
-
-  return (
-    <span className={className} onMouseEnter={triggerAnimation}>
-      {displayText}
-    </span>
-  );
-};
-
 // --- LIGHTBOX ---
 const Lightbox = ({ src, onClose }: { src: string, onClose: () => void }) => {
   return (
@@ -106,7 +73,7 @@ const Lightbox = ({ src, onClose }: { src: string, onClose: () => void }) => {
 };
 
 // --- PROJECT DRAWER ---
-const ProjectDrawer = ({ project, onClose }: { project: any, onClose: () => void }) => {
+const ProjectDrawer = ({ project, onClose }: { project: Project; onClose: () => void }) => {
   const [viewMode, setViewMode] = useState<'scrapbook' | 'filmstrip'>('scrapbook');
   const [lightboxImg, setLightboxImg] = useState<string | null>(null);
 
@@ -208,7 +175,7 @@ const ProjectDrawer = ({ project, onClose }: { project: any, onClose: () => void
 // --- MAIN COMPONENT ---
 export default function StoryLayout() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [activeStory, setActiveStory] = useState<any>(null);
+  const [activeStory, setActiveStory] = useState<Project | null>(null);
 
   const scrollTo = (id: string) => {
     const element = document.getElementById(id);
@@ -409,7 +376,7 @@ export default function StoryLayout() {
 }
 
 // --- HELPERS  ---
-const FadeIn = ({ children, delay = 0, className = "" }: any) => (
+const FadeIn = ({ children, delay = 0, className = "" }: { children: React.ReactNode; delay?: number; className?: string }) => (
   <motion.div
     initial={{ opacity: 0, y: 30 }}
     whileInView={{ opacity: 1, y: 0 }}
@@ -421,7 +388,7 @@ const FadeIn = ({ children, delay = 0, className = "" }: any) => (
   </motion.div>
 );
 
-const SpotlightCard = ({ children, className = "", onClick }: any) => {
+const SpotlightCard = ({ children, className = "", onClick }: { children: React.ReactNode; className?: string; onClick?: () => void }) => {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
@@ -448,7 +415,7 @@ const SpotlightCard = ({ children, className = "", onClick }: any) => {
   );
 };
 
-const TimelineItem = ({ role, company, date, children, stack, index }: any) => {
+const TimelineItem = ({ role, company, date, children, stack, index }: { role: string; company: string; date: string; children: React.ReactNode; stack: string[]; index: number }) => {
   const isEven = index % 2 === 0;
   return (
     <div className="relative pl-8 md:pl-0">
@@ -470,14 +437,14 @@ const TimelineItem = ({ role, company, date, children, stack, index }: any) => {
   );
 };
 
-const SkillCardWrapper = ({ title, skills, icon }: any) => (
+const SkillCardWrapper = ({ title, skills, icon }: { title: string; skills: string[]; icon: React.ReactNode }) => (
   <SpotlightCard className="p-6 h-full">
     <div className="flex items-center gap-3 mb-4"><div className="p-2 bg-slate-950 rounded-lg border border-slate-800">{icon}</div><h3 className="font-bold text-white">{title}</h3></div>
     <div className="flex flex-wrap gap-2">{skills.map((s: string) => (<span key={s} className="px-3 py-1 bg-slate-950 text-slate-400 text-xs rounded-full border border-slate-800">{s}</span>))}</div>
   </SpotlightCard>
 );
 
-const SocialLink = ({ href, icon, label }: any) => (
+const SocialLink = ({ href, icon, label }: { href: string; icon: React.ReactNode; label: string }) => (
   <a href={href} target="_blank" className="flex items-center gap-3 px-6 py-4 bg-slate-900 rounded-xl border border-slate-800 hover:border-blue-500 transition-all group hover:bg-slate-900/80">
     <div className="text-blue-500 group-hover:scale-110 transition-transform">{icon}</div>
     <span className="text-white">{label}</span>

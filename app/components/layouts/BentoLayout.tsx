@@ -1,23 +1,26 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import { 
-  Github, Linkedin, Mail, MapPin, 
-  Database, Terminal, Cpu, Layers, 
-  ArrowUpRight, Monitor, Server, 
+  Github, Linkedin, Mail, MapPin,
+  Terminal, Cpu, Layers,
+  ArrowUpRight,
   Download, X, Maximize2, ChevronLeft, ChevronRight
 } from "lucide-react";
 import { 
   motion, Variants, AnimatePresence, 
   useMotionValue, useTransform, useMotionTemplate, useSpring 
 } from "framer-motion";
-import { DATA } from "../../data"; 
+import { DATA, type Project } from "../../data"; 
 import ContributionGraph from "../ContributionGraph";
 
+// Never emits — the snapshot differs per environment, not over time.
+const subscribeNever = () => () => {};
+
 // --- 3D TILT CARD + SPOTLIGHT ---
-const TiltCard = ({ children, className = "", onClick }: any) => {
+const TiltCard = ({ children, className = "", onClick }: { children: React.ReactNode; className?: string; onClick?: () => void }) => {
   const ref = useRef<HTMLDivElement>(null);
   
   const x = useMotionValue(0);
@@ -101,16 +104,16 @@ const itemVar: Variants = {
 };
 
 // --- PORTAL MODAL COMPONENT (Fixes Centering & Animation) ---
-const ProjectModal = ({ project, onClose }: { project: any, onClose: () => void }) => {
+const ProjectModal = ({ project, onClose }: { project: Project; onClose: () => void }) => {
   const [currentImg, setCurrentImg] = useState(0);
-  const [mounted, setMounted] = useState(false);
+  // Client-only gate, without setState in an effect: the server snapshot is
+  // false and the client snapshot true, so React flips it once at hydration.
+  const mounted = useSyncExternalStore(subscribeNever, () => true, () => false);
 
   useEffect(() => {
-    setMounted(true);
     document.body.style.overflow = 'hidden';
-    return () => { 
-      setMounted(false);
-      document.body.style.overflow = 'unset'; 
+    return () => {
+      document.body.style.overflow = 'unset';
     };
   }, []);
 
@@ -207,7 +210,7 @@ const ProjectModal = ({ project, onClose }: { project: any, onClose: () => void 
                      <button onClick={prevImage} className="absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-black/50 hover:bg-black/80 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity z-10 backdrop-blur-sm"><ChevronLeft size={24} /></button>
                      <button onClick={nextImage} className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-black/50 hover:bg-black/80 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity z-10 backdrop-blur-sm"><ChevronRight size={24} /></button>
                      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
-                        {project.images.map((_: any, idx: number) => (
+                        {project.images.map((_: string, idx: number) => (
                           <div key={idx} className={`w-1.5 h-1.5 rounded-full transition-all shadow-sm ${idx === currentImg ? 'bg-white scale-125' : 'bg-white/40'}`} />
                         ))}
                      </div>
@@ -275,7 +278,7 @@ const ProjectModal = ({ project, onClose }: { project: any, onClose: () => void 
 
 // --- MAIN COMPONENT ---
 export default function BentoLayout() {
-  const [selectedProject, setSelectedProject] = useState<any>(null);
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-300 font-sans selection:bg-indigo-500/30 p-4 md:p-8 pt-28 pb-32">
@@ -453,11 +456,11 @@ export default function BentoLayout() {
 
 // --- HELPER COMPONENTS ---
 
-const SocialBtn = ({ icon, href, label }: any) => (
+const SocialBtn = ({ icon, href, label }: { icon: React.ReactNode; href: string; label: string }) => (
   <a href={href} target="_blank" rel="noopener noreferrer" className="p-3 bg-zinc-800 text-zinc-400 rounded-xl hover:bg-indigo-600 hover:text-white transition-all duration-300" title={label}>{icon}</a>
 );
 
-const TechCategory = ({ title, items, icon }: any) => (
+const TechCategory = ({ title, items, icon }: { title: string; items: string; icon: React.ReactNode }) => (
   <div className="bg-zinc-950/50 p-4 rounded-xl border border-zinc-800/50">
     <div className="flex items-center gap-2 mb-2 text-zinc-300 font-bold text-sm">{icon} {title}</div>
     <div className="text-xs text-zinc-500 leading-relaxed">{items}</div>

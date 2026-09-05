@@ -1,7 +1,10 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useMemo, useSyncExternalStore } from "react";
+
+// Never emits — the snapshot differs per environment, not over time.
+const subscribeNever = () => () => {};
 
 const generateData = () => {
   const data = [];
@@ -19,11 +22,11 @@ const generateData = () => {
 };
 
 export default function ContributionGraph() {
-  const [data, setData] = useState<{ date: Date; level: number }[]>([]);
-
-  useEffect(() => {
-    setData(generateData());
-  }, []);
+  // generateData() is random, so running it during SSR would make the server
+  // and client disagree. This gate flips once, after hydration — the same
+  // outcome as the old setState-in-an-effect, without the cascading re-render.
+  const hydrated = useSyncExternalStore(subscribeNever, () => true, () => false);
+  const data = useMemo(() => (hydrated ? generateData() : []), [hydrated]);
 
   const getColor = (level: number) => {
     switch (level) {
