@@ -548,7 +548,7 @@ export default function BentoLayout() {
              </div>            
              <div className="mt-8 pt-8 border-t border-zinc-800">
               <a 
-                href="/Salimmay.pdf" 
+                href="/salimmay.pdf" 
                 download
                 className="w-full flex items-center justify-center gap-2 py-3 bg-zinc-800 hover:bg-zinc-700 text-white rounded-xl transition-colors font-medium text-sm"
               >

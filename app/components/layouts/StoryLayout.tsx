@@ -382,7 +382,7 @@ export default function StoryLayout() {
             <button onClick={() => scrollTo("contact")} className="px-8 py-3 bg-blue-600 text-white rounded-full font-medium hover:bg-blue-500 transition-all shadow-lg shadow-blue-500/25">
               Get in Touch
             </button>
-            <a href="/Salimmay.pdf" download className="px-8 py-3 bg-slate-800 text-white rounded-full font-medium hover:bg-slate-700 transition-all flex items-center gap-2 border border-slate-700">
+            <a href="/salimmay.pdf" download className="px-8 py-3 bg-slate-800 text-white rounded-full font-medium hover:bg-slate-700 transition-all flex items-center gap-2 border border-slate-700">
               <Download size={18} /> Download Resume
             </a>
           </div>
