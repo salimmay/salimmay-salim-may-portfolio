@@ -144,6 +144,51 @@ function Decode({ text, className, delay = 0 }: { text: string; className?: stri
   return <span className={className}>{display}</span>;
 }
 
+// ── Ambient backplate ───────────────────────────────────────────────────────
+// Veo-generated night plate, served from Cloudinary. The transform chain does
+// real work: e_boomerang plays it forward then reversed, which turns an 8s clip
+// with mismatched ends into a 16s seamless loop; ac_none drops the audio track;
+// f_auto/q_auto let Cloudinary pick codec and quality per browser. Net result is
+// 2.4 MB for twice the runtime, versus 5.3 MB for the raw file.
+const AMBIENT_BASE = "https://res.cloudinary.com/dkdtwmbcp/video/upload";
+const AMBIENT_ID = "v1788575460/3dnaked_eye";
+const AMBIENT_VIDEO = `${AMBIENT_BASE}/e_boomerang,f_auto,q_auto,ac_none,w_1280/${AMBIENT_ID}.mp4`;
+// so_0 = "second offset 0", i.e. Cloudinary renders frame one as a still.
+const AMBIENT_POSTER = `${AMBIENT_BASE}/so_0,f_auto,q_auto,w_1280/${AMBIENT_ID}.jpg`;
+
+function AmbientBackplate() {
+  const [reduceMotion, setReduceMotion] = useState(false);
+
+  useEffect(() => {
+    const query = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const sync = () => setReduceMotion(query.matches);
+    sync();
+    query.addEventListener("change", sync);
+    return () => query.removeEventListener("change", sync);
+  }, []);
+
+  // Anyone who asked the OS for less motion gets the poster frame instead — the
+  // scene still reads, it just stops moving.
+  if (reduceMotion) {
+    // eslint-disable-next-line @next/next/no-img-element
+    return <img src={AMBIENT_POSTER} alt="" className="h-full w-full object-cover" />;
+  }
+
+  return (
+    <video
+      autoPlay
+      muted
+      loop
+      playsInline
+      preload="metadata"
+      poster={AMBIENT_POSTER}
+      className="h-full w-full object-cover"
+    >
+      <source src={AMBIENT_VIDEO} type="video/mp4" />
+    </video>
+  );
+}
+
 // ── Ambient scenery ─────────────────────────────────────────────────────────
 // Drawn entirely in CSS so there are no extra assets to ship: a planet arc
 // above the horizon, a warm glow along the bottom, a breathing key light behind
@@ -152,6 +197,15 @@ function Scenery() {
   return (
     <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
       <div className="absolute inset-0 bg-[radial-gradient(120%_90%_at_50%_-10%,#0b1220_0%,#020617_55%,#020617_100%)]" />
+
+      {/* Desktop only — not worth 2.4 MB of someone's cellular data, and the CSS
+          scenery below already stands on its own. */}
+      <div className="absolute inset-0 hidden opacity-[0.55] md:block">
+        <AmbientBackplate />
+      </div>
+      {/* The plate lifts the left-hand brightness, where all the copy lives, so
+          pull it back down before the text sits on top of it. */}
+      <div className="absolute inset-0 hidden bg-gradient-to-r from-slate-950 via-slate-950/70 to-transparent md:block" />
 
       {/* Planet */}
       <div className="absolute left-1/2 top-[-28vh] h-[62vh] w-[62vh] -translate-x-1/2 rounded-full bg-[radial-gradient(circle_at_35%_35%,rgba(59,130,246,0.30),rgba(30,58,138,0.16)_45%,transparent_68%)] blur-[2px]" />
