@@ -13,6 +13,12 @@ import {
 import { DATA, type Project } from "../../data";
 import { altFor } from "../../lib/seo";
 
+// Same split the 3D layout makes: products were shipped for someone, tools are
+// what Salim built to ship with. Mixing them undersells both.
+const PRODUCTS = DATA.projects.filter((project) => project.kind !== "tool");
+const TOOLS = DATA.projects.filter((project) => project.kind === "tool");
+
+
 // --- 1. MAGNETIC NAV ITEM ---
 const MagneticNav = ({ children, onClick, className }: { children: React.ReactNode; onClick?: () => void; className?: string }) => {
   const ref = useRef<HTMLButtonElement>(null);
@@ -447,7 +453,7 @@ export default function StoryLayout() {
           </FadeIn>
 
           <div className="flex flex-col gap-6">
-            {DATA.projects.map((project) => (
+            {PRODUCTS.map((project) => (
               <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} key={project.id}>
                 <SpotlightCard className="w-full cursor-pointer hover:border-blue-500/50 transition-colors" onClick={() => setActiveStory(project)}>
                   <div className="p-8">
@@ -467,6 +473,59 @@ export default function StoryLayout() {
                            Read Story <ArrowRight size={16} />
                         </div>
                       </div>
+                    </div>
+                  </div>
+                </SpotlightCard>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* TOOLCHAIN — the tools, kept apart from the client work */}
+      <section id="toolchain" className="py-20 px-6 bg-slate-900/30">
+        <div className="max-w-4xl mx-auto">
+          <FadeIn>
+            <h2 className="text-3xl font-bold text-white mb-4 flex items-center gap-3">
+              <Terminal className="text-blue-500" /> Toolchain
+            </h2>
+            <p className="text-slate-400 mb-12 max-w-2xl leading-relaxed">
+              Everything above was built for someone else. These are the ones I built for
+              myself — and they all run against models on my own machine.
+            </p>
+          </FadeIn>
+
+          <div className="grid gap-6 md:grid-cols-3">
+            {TOOLS.map((tool, idx) => (
+              <motion.div
+                key={tool.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: idx * 0.08 }}
+              >
+                {/* Opens the same drawer as a project: these have no screenshots
+                    yet, but the write-up is the point of them. */}
+                <SpotlightCard
+                  className="h-full cursor-pointer hover:border-blue-500/50 transition-colors"
+                  onClick={() => setActiveStory(tool)}
+                >
+                  <div className="p-6 flex flex-col h-full">
+                    <span className={`self-start px-2 py-0.5 rounded text-xs font-bold border uppercase tracking-wide ${tool.color}`}>
+                      {tool.tag}
+                    </span>
+                    <h3 className="text-xl font-bold text-white mt-4">{tool.title}</h3>
+                    <p className="text-slate-500 text-xs font-mono mt-1">{tool.category}</p>
+                    <p className="text-slate-400 text-sm leading-relaxed mt-4 flex-1">{tool.desc}</p>
+                    <div className="flex flex-wrap gap-2 mt-5">
+                      {tool.tech.slice(0, 4).map((t) => (
+                        <span
+                          key={t}
+                          className="text-xs px-2 py-1 bg-slate-950 border border-slate-800 rounded text-slate-400 font-mono"
+                        >
+                          {t}
+                        </span>
+                      ))}
                     </div>
                   </div>
                 </SpotlightCard>

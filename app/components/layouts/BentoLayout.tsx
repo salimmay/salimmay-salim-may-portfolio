@@ -14,7 +14,13 @@ import {
   useMotionValue, useTransform, useMotionTemplate, useSpring 
 } from "framer-motion";
 import { DATA, STATS, yearsBuilding, type Project } from "../../data";
-import { altFor } from "../../lib/seo"; 
+import { altFor } from "../../lib/seo";
+
+// Same split the 3D layout makes: products were shipped for someone, tools are
+// what Salim built to ship with. Mixing them undersells both.
+const PRODUCTS = DATA.projects.filter((project) => project.kind !== "tool");
+const TOOLS = DATA.projects.filter((project) => project.kind === "tool");
+ 
 import ContributionGraph from "../ContributionGraph";
 
 // Never emits — the snapshot differs per environment, not over time.
@@ -561,7 +567,7 @@ export default function BentoLayout() {
           {/* 5. PROJECTS GRID */}
           <motion.div variants={itemVar} className="md:col-span-8 row-span-2">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 h-full">
-              {DATA.projects.map((project, i) => (
+              {PRODUCTS.map((project, i) => (
                 <div 
                   key={i} 
                   className="h-full"
@@ -594,6 +600,45 @@ export default function BentoLayout() {
                     </div>
                   </TiltCard>
                 </div>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* 6. TOOLCHAIN — a dashboard row, so these stay compact and link out
+                 rather than opening a modal with no screenshots behind it. */}
+          <motion.div
+            variants={itemVar}
+            className="md:col-span-12 bg-zinc-900/30 border border-zinc-800 rounded-3xl p-8"
+          >
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-6">
+              <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                <Terminal className="text-indigo-500" /> Toolchain
+              </h3>
+              <p className="text-zinc-500 text-sm">Built for myself, not for a client. All local-first.</p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {TOOLS.map((tool) => (
+                <a
+                  key={tool.id}
+                  href={tool.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group bg-zinc-950/50 p-5 rounded-xl border border-zinc-800/50 hover:border-indigo-500/50 transition-colors flex flex-col"
+                >
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-white font-bold">{tool.title}</h4>
+                    <ArrowUpRight
+                      size={15}
+                      className="text-zinc-600 group-hover:text-indigo-400 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-all"
+                    />
+                  </div>
+                  <p className="text-indigo-400 text-xs font-medium mt-1">{tool.category}</p>
+                  <p className="text-zinc-400 text-xs leading-relaxed mt-3 flex-1">{tool.desc}</p>
+                  <div className="text-zinc-600 text-[11px] font-mono mt-4">
+                    {tool.tech.slice(0, 3).join(" · ")}
+                  </div>
+                </a>
               ))}
             </div>
           </motion.div>
