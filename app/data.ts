@@ -17,6 +17,8 @@ export type Project = {
   images: string[];
   link?: string;
   ExternalLink?: string;
+  /** "tool" = something built to do the work, not a product delivered to a client. */
+  kind?: "tool";
 };
 
 export const DATA = {
@@ -117,6 +119,91 @@ export const DATA = {
         "/Terkina/admin.png",
         "/Terkina/crm.png",
       ],
+    },
+    {
+      id: "vaultp",
+      title: "VaultP",
+      category: "Local-First Encrypted Vault",
+      tag: "Security",
+      desc: "An encrypted vault for expenses, debts and documents that runs on Android and Windows off one shared database — no server, no account, fully offline.",
+      story: "Every personal finance app I looked at wanted an account, a server and a subscription to hold data that never needed to leave my devices. VaultP is the opposite bet: one encrypted database, shared between an Android phone and a Windows desktop, with every feature working with the network switched off.\n\nThe currency handling is where most of the care went. The Tunisian dinar has three decimal places rather than two, so exponents are looked up per currency instead of assumed, and a foreign charge records both what the vendor billed and what the bank actually debited — the spread is part of the true cost. Where a figure is derived from a past rate it is marked as an estimate rather than presented as fact.\n\nDebts are ledgers rather than running totals: interest is computed on read, partial payments allocate deterministically, and settling produces a receipt instead of erasing history. Documents are encrypted per file and their text is read on-device on both platforms, so search finds a document by what is written inside it without anything being uploaded.\n\nSync is deliberately boring — point both devices at any folder something else already keeps in step, or at your own Google Drive project. The folder only ever receives ciphertext.",
+      tech: ["TypeScript", "Electron", "React", "Expo", "SQLite (encrypted)", "Tesseract.js", "ML Kit"],
+      color: "bg-teal-500/10 text-teal-500 border-teal-500/20",
+      // TODO: screenshots -> public/VaultP/
+      images: [],
+      link: "https://github.com/salimmay/VaultP",
+    },
+    {
+      id: "slayemcanvas",
+      title: "SlayemCanvas",
+      category: "AI Website Builder",
+      tag: "AI Tooling",
+      kind: "tool" as const,
+      desc: "An AI site builder with a visual canvas on top — describe a page, drop in a block, or click any element and say what to change. Every edit writes real React and Tailwind.",
+      story: "Most AI site builders hand you a mockup and leave the translation to code as your problem. SlayemCanvas removes that step: the canvas edits real React and Tailwind source on disk, so what you see is genuinely what ships.\n\nThe piece that makes it work is an AST layer built on Babel. Every node carries a deterministic ID that survives both AI edits and manual formatting, which is what lets a change stay surgical instead of regenerating the whole page. Click any element and you can either adjust its properties directly or tell the assistant what to change about that node alone.\n\nProjects are disk-backed — you open a real folder, and every change syncs straight to files with no proprietary project format. The preview is an actual Next.js dev server rather than a simulated iframe, so multi-page navigation behaves the way it will in production, and the whole thing exports as a standalone Next.js project.",
+      tech: ["Next.js 15", "React 19", "TypeScript", "Google Gemini", "Babel AST", "Tailwind CSS", "Vitest"],
+      color: "bg-cyan-500/10 text-cyan-500 border-cyan-500/20",
+      // TODO: screenshots -> public/SlayemCanvas/ (split view: blocks, canvas, assistant)
+      images: [],
+      link: "https://github.com/salimmay/SlayemCanvas",
+    },
+    {
+      id: "slayemcode",
+      title: "SlayemCode",
+      category: "Autonomous AI Coding Orchestrator",
+      tag: "AI Tooling",
+      kind: "tool" as const,
+      desc: "A local-first orchestrator that runs a hierarchy of AI personas on consumer hardware — planning, delegating, writing code, then verifying it actually works.",
+      story: "SlayemCode is built around a hardware constraint rather than around a model: 8GB of VRAM and 32GB of RAM. That budget rules out running several models at once, so the architecture is single-model, multi-persona — one Ollama model at a time, swapped between roles by a FastAPI state machine that manages the task DAG.\n\nThe control plane is where the real work sits: a git engine for diffs and undo, a filesystem sandbox enforcing path boundaries, a security filter, a session store in SQLite, a prompt audit log, and an AST code map for context injection. The Next.js GUI watches all of it over WebSockets — chat, kanban, git diffs, terminal and heatmap in real time.\n\nBy default nothing leaves the machine. Individual personas can be pointed at a remote model, which exists because planning is where a 7B model struggles most and it is one call per project — but the trade is stated plainly in the docs rather than buried, since the builder persona's prompt contains your source. Remote routing is confined to a single provider module; there is no telemetry anywhere else.",
+      tech: ["Python", "FastAPI", "Next.js", "Ollama", "SQLite", "WebSockets"],
+      color: "bg-rose-500/10 text-rose-500 border-rose-500/20",
+      // TODO: screenshots -> public/SlayemCode/ (kanban, git diffs, heatmap)
+      images: [],
+      link: "https://github.com/salimmay/SlayemCode",
+    },
+    {
+      id: "twilight",
+      title: "Twilight Prod",
+      category: "Cinematic Studio Site",
+      tag: "Motion",
+      desc: "A portfolio site for a Tunisian production house, built around momentum scrolling, scroll-choreographed reveals and curtain page transitions.",
+      story: "A production house sells the way its work feels, so the site had to move like a film reel rather than a document. Lenis carries the weighted, momentum-based scroll; GSAP handles the scroll-triggered reveals and stagger timelines; View Transitions give navigation a curtain wipe with no visible latency.\n\nIt runs on Astro's islands architecture, so the heavy interactive pieces — the magnetic custom cursor, the hybrid video player that handles both local loops and YouTube, the glassmorphic nav that reacts to scroll position — ship as isolated React islands while everything else stays static HTML. Projects are managed as Markdown, so the studio can add work without touching code.",
+      tech: ["Astro 5", "React 19", "GSAP", "Lenis", "Tailwind CSS 4", "TypeScript"],
+      color: "bg-red-500/10 text-red-500 border-red-500/20",
+      // TODO: screenshots -> public/Twilight/
+      images: [],
+      link: "https://github.com/salimmay/Twilight-prod",
+    },
+    {
+      id: "stajnet",
+      title: "StajNet",
+      category: "Recruitment Portal",
+      tag: "MERN",
+      desc: "A recruitment portal for the Tunisian airline industry — internship offers, applications, candidate quizzes and workshop management, with an admin side behind it.",
+      story: "StajNet handles the full loop between a candidate and a recruiter: browsing internship offers, submitting an application with file uploads, sitting a qualifying quiz, and signing up for workshops — with an administrative side for managing all of it.\n\nThe split is conventional MERN and deliberately so. A React front end talks to an Express API over axios, with authentication, file upload handling and persistence in MongoDB behind it. The interest is in the domain rather than the architecture: recruitment flows are full of state that has to survive partial completion, and quizzes and workshops each carry their own scheduling and capacity rules.",
+      tech: ["React 18", "Node.js", "Express", "MongoDB", "Tailwind CSS", "MUI"],
+      color: "bg-indigo-500/10 text-indigo-500 border-indigo-500/20",
+      images: [
+        "/StajNet/Home.png",
+        "/StajNet/Offers.png",
+        "/StajNet/Workshops.png",
+        "/StajNet/Dashboard.png"
+      ],
+      link: "https://github.com/salimmay/Tunisiar-Recrute",
+    },
+    {
+      id: "slayemide",
+      title: "SlayemIDE",
+      category: "Local LLM Coding CLI",
+      tag: "AI Tooling",
+      kind: "tool" as const,
+      desc: "A terminal coding agent that talks only to models on your own machine — a TUI REPL over Ollama, with vector memory and its own tool layer. Still in progress.",
+      story: "SlayemIDE started as the question underneath SlayemCode: how much of a coding agent can run with nothing but a local model and a terminal? It is a TUI REPL built on prompt_toolkit and rich, driving Ollama directly, with ChromaDB for vector memory across sessions and a tool layer that can search the web and read pages back.\n\nThe module split is deliberately small — an engine, a memory store, a provider layer, tools, and the UI effects that make a terminal feel responsive. It packages with PyInstaller behind an Inno Setup installer, so it installs as a normal Windows application rather than requiring a Python environment.\n\nStill unfinished, and listed as such: it is the groundwork that the orchestrator grew out of rather than a finished product.",
+      tech: ["Python", "Ollama", "ChromaDB", "prompt_toolkit", "Rich", "PyInstaller"],
+      color: "bg-lime-500/10 text-lime-500 border-lime-500/20",
+      // TODO: screenshots -> public/SlayemIDE/ (terminal capture)
+      images: [],
+      link: "https://github.com/salimmay/SlayemIDE",
     },
     
     {

@@ -44,6 +44,12 @@ const AvatarLoader = dynamic(() => import("../model/AvatarLoader"), {
 // "Full Stack Developer & System Admin" → the two things worth cycling.
 const SPECIALISMS = DATA.personal.role.split("&").map((part) => part.trim());
 
+// Products are the things shipped for someone; TOOLS are what Salim built to do
+// the shipping with. They read very differently to a visitor, so they get their
+// own section rather than sitting in the same list.
+const PRODUCTS = DATA.projects.filter((project) => project.kind !== "tool");
+const TOOLS = DATA.projects.filter((project) => project.kind === "tool");
+
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
 const reveal: Variants = {
@@ -639,7 +645,7 @@ function Projects({ onZoom }: { onZoom: (src: string) => void }) {
       <SectionHeading index="03" title="Selected Work" kicker="Things I designed, built and shipped." />
 
       <div className="space-y-28 md:space-y-40">
-        {DATA.projects.map((project, i) => {
+        {PRODUCTS.map((project, i) => {
           const flipped = i % 2 === 1;
           const repo = (project as { link?: string }).link;
           const live = (project as { ExternalLink?: string }).ExternalLink;
@@ -715,12 +721,89 @@ function Projects({ onZoom }: { onZoom: (src: string) => void }) {
 }
 
 // ── Contact ─────────────────────────────────────────────────────────────────
+// ── Toolchain ───────────────────────────────────────────────────────────────
+// Deliberately not screenshot-led: these are unfinished or in active use, and a
+// half-built UI shot undersells them. The interesting claim is what each one
+// does and what it runs on, so the card leads with that. Screenshots slot in
+// later without changing the layout.
+function Toolchain() {
+  return (
+    <section id="toolchain" className="relative mx-auto max-w-7xl px-6 py-28 md:px-12 md:py-40">
+      <SectionHeading
+        index="04"
+        title="Toolchain"
+        kicker="And the tools I built to do the work with."
+      />
+
+      <Reveal>
+        <p className="mb-12 max-w-2xl leading-relaxed text-slate-400">
+          Everything above was shipped for someone. These three are for me — a local-first
+          coding orchestrator, a canvas that edits real React, and the terminal agent the
+          other two grew out of. All of them run against models on my own machine.
+        </p>
+      </Reveal>
+
+      <div className="grid gap-6 md:grid-cols-3">
+        {TOOLS.map((tool, i) => (
+          <Reveal key={tool.id} i={i}>
+            <motion.article
+              whileHover={{ y: -6 }}
+              transition={{ type: "spring", stiffness: 280, damping: 24 }}
+              className="group flex h-full flex-col rounded-xl border border-slate-800 bg-slate-900/40 p-6 backdrop-blur-md transition-colors hover:border-blue-500/40"
+            >
+              <div className="flex items-center gap-3">
+                <span className={`rounded-full border px-3 py-1 font-mono text-[11px] ${tool.color}`}>
+                  {tool.tag}
+                </span>
+              </div>
+
+              <h3 className="mt-4 text-xl font-bold text-white">{tool.title}</h3>
+              <p className="mt-1 font-mono text-[11px] uppercase tracking-widest text-slate-500">
+                {tool.category}
+              </p>
+
+              <p className="mt-4 flex-1 text-sm leading-relaxed text-slate-400">{tool.desc}</p>
+
+              <div className="mt-5 flex flex-wrap gap-1.5">
+                {tool.tech.map((tech) => (
+                  <span
+                    key={tech}
+                    className="rounded border border-slate-800 bg-slate-950/70 px-2 py-0.5 font-mono text-[11px] text-slate-400"
+                  >
+                    {tech}
+                  </span>
+                ))}
+              </div>
+
+              {tool.link && (
+                <a
+                  href={tool.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-6 inline-flex items-center gap-1.5 font-mono text-sm text-slate-400 transition-colors hover:text-white"
+                >
+                  <Github size={14} />
+                  Source
+                  <ArrowUpRight
+                    size={13}
+                    className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                  />
+                </a>
+              )}
+            </motion.article>
+          </Reveal>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function Contact() {
   const { socials } = DATA.personal;
 
   return (
     <section id="contact" className="relative mx-auto max-w-7xl px-6 py-28 md:px-12 md:py-40">
-      <SectionHeading index="04" title="Contact" />
+      <SectionHeading index="05" title="Contact" />
 
       <Reveal>
         <h2 className="max-w-3xl text-4xl font-bold leading-tight text-white md:text-6xl">
@@ -882,6 +965,7 @@ export default function ModelLayout() {
         <About />
         <Experience />
         <Projects onZoom={setZoomed} />
+        <Toolchain />
         <Contact />
       </div>
 
