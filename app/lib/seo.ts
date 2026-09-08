@@ -1,4 +1,4 @@
-import { DATA, STATS } from "../data";
+import { DATA } from "../data";
 
 /**
  * Single source of truth for search/social copy and structured data.
@@ -85,6 +85,10 @@ export const IMAGE_ALT: Record<string, string> = {
 export const altFor = (src: string, projectTitle?: string) =>
   IMAGE_ALT[src] ?? (projectTitle ? `${projectTitle} project screenshot` : "Project screenshot");
 
+// Utilities are marked up on /tools instead, so the homepage list matches what is
+// actually on the homepage.
+const HOMEPAGE_PROJECTS = DATA.projects.filter((project) => project.kind !== "utility");
+
 const PERSON_ID = `${SITE_URL}/#salim`;
 
 /**
@@ -136,8 +140,8 @@ export const buildSchema = () => [
     "@context": "https://schema.org",
     "@type": "ItemList",
     name: `Projects by ${DATA.personal.name}`,
-    numberOfItems: STATS.projects,
-    itemListElement: DATA.projects.map((project, index) => {
+    numberOfItems: HOMEPAGE_PROJECTS.length,
+    itemListElement: HOMEPAGE_PROJECTS.map((project, index) => {
       const link = (project as { link?: string }).link;
       const live = (project as { ExternalLink?: string }).ExternalLink;
       return {
@@ -158,4 +162,56 @@ export const buildSchema = () => [
       };
     }),
   },
+];
+
+// ── /tools ──────────────────────────────────────────────────────────────────
+// A different audience from the portfolio: people looking for a tool, not for
+// someone to hire. So the copy targets what they would actually type, and the
+// page carries the support link that would read badly on a CV.
+
+/** Set this once the account exists; the button only renders when it is non-empty. */
+export const BUY_ME_A_COFFEE = "";
+
+export const TOOLS_TITLE = "Free Developer Tools & Utilities — Salim May";
+
+export const TOOLS_DESCRIPTION =
+  "Small tools I built and gave away: a download manager, a PNG/JPEG to ICO favicon converter, a TV show tracker. Free, no account, open source.";
+
+export const TOOLS_H1 = "Small tools I built and gave away";
+
+/**
+ * Unlike the portfolio projects, these genuinely qualify for a SoftwareApplication
+ * rich result: a free download can carry a real `offers` node with price 0, which
+ * is one of the properties Google requires before it will render one. The portfolio
+ * entries can't — they aren't products, so they stay entity-level markup only.
+ */
+export const buildToolsSchema = (
+  utilities: { title: string; desc: string; tech: string[]; link?: string }[]
+) => [
+  {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "@id": `${SITE_URL}/tools#page`,
+    url: `${SITE_URL}/tools`,
+    name: TOOLS_TITLE,
+    description: TOOLS_DESCRIPTION,
+    inLanguage: "en",
+    author: { "@id": `${SITE_URL}/#salim` },
+  },
+  ...utilities.map((tool) => ({
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    name: tool.title,
+    description: tool.desc,
+    applicationCategory: "UtilitiesApplication",
+    operatingSystem: "Windows, Web",
+    author: { "@id": `${SITE_URL}/#salim` },
+    ...(tool.tech.length ? { programmingLanguage: tool.tech } : {}),
+    ...(tool.link ? { codeRepository: tool.link } : {}),
+    offers: {
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "USD",
+    },
+  })),
 ];

@@ -47,7 +47,7 @@ const SPECIALISMS = DATA.personal.role.split("&").map((part) => part.trim());
 // Products are the things shipped for someone; TOOLS are what Salim built to do
 // the shipping with. They read very differently to a visitor, so they get their
 // own section rather than sitting in the same list.
-const PRODUCTS = DATA.projects.filter((project) => project.kind !== "tool");
+const PRODUCTS = DATA.projects.filter((project) => !project.kind);
 const TOOLS = DATA.projects.filter((project) => project.kind === "tool");
 
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];

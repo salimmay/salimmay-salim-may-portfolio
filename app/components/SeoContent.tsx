@@ -49,7 +49,7 @@ export default function SeoContent() {
       ))}
 
       <h2>Selected work</h2>
-      {DATA.projects.map((project) => (
+      {DATA.projects.filter((project) => project.kind !== "utility").map((project) => (
         <article key={project.id}>
           <h3>
             {project.title} — {project.category}

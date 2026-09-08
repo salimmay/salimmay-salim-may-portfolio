@@ -1,8 +1,8 @@
 import type { MetadataRoute } from "next";
 import { SITE_URL } from "./lib/seo";
 
-// Single-page site, so this is one entry. It exists because a sitemap is how
-// you hand Search Console a lastModified signal and confirm the canonical URL.
+// Two routes: the portfolio and the tools page. They target different searches,
+// so both need to be discoverable on their own.
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
     {
@@ -10,6 +10,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 1,
+    },
+    {
+      url: `${SITE_URL}/tools`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.8,
     },
   ];
 }

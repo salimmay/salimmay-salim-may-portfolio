@@ -18,7 +18,7 @@ import { altFor } from "../../lib/seo";
 
 // Same split the 3D layout makes: products were shipped for someone, tools are
 // what Salim built to ship with. Mixing them undersells both.
-const PRODUCTS = DATA.projects.filter((project) => project.kind !== "tool");
+const PRODUCTS = DATA.projects.filter((project) => !project.kind);
 const TOOLS = DATA.projects.filter((project) => project.kind === "tool");
  
 import ContributionGraph from "../ContributionGraph";

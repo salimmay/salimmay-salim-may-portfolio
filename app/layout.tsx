@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import SeoContent from "./components/SeoContent";
-import { META_DESCRIPTION, META_TITLE, OG_ALT, SITE_URL, buildSchema } from "./lib/seo";
+import { META_DESCRIPTION, META_TITLE, OG_ALT, SITE_URL } from "./lib/seo";
 
 export const metadata: Metadata = {
     metadataBase: new URL(SITE_URL),
@@ -64,15 +63,8 @@ export default function RootLayout({
                         __html: `if("scrollRestoration" in history)history.scrollRestoration="manual";`,
                     }}
                 />
-                <script
-                    type="application/ld+json"
-                    dangerouslySetInnerHTML={{ __html: JSON.stringify(buildSchema()) }}
-                />
             </head>
             <body className={`bg-slate-950 text-slate-300 antialiased selection:bg-blue-500/30 selection:text-white`}>
-                {/* Server-rendered, so it is in the HTML every crawler receives —
-                    see the note in SeoContent.tsx for why that matters here. */}
-                <SeoContent />
                 {children}
             </body>
         </html>

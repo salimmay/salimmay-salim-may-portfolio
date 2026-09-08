@@ -18,7 +18,12 @@ export type Project = {
   link?: string;
   ExternalLink?: string;
   /** "tool" = something built to do the work, not a product delivered to a client. */
-  kind?: "tool";
+  /**
+   * Absent  = a product, shipped for someone. Shown in Selected Work.
+   * "tool"    = built to do the work with. Shown in the Toolchain section.
+   * "utility" = a small standalone tool. Lives on /tools, not in the portfolio.
+   */
+  kind?: "tool" | "utility";
 };
 
 export const DATA = {
@@ -132,6 +137,58 @@ export const DATA = {
       // TODO: screenshots -> public/VaultP/
       images: [],
       link: "https://github.com/salimmay/VaultP",
+    },
+    {
+      id: "logicflow",
+      title: "LogicFlow",
+      category: "Event-Driven Automation Platform",
+      tag: "Infrastructure",
+      desc: "A platform for defining business rules visually and running them as events, so the logic lives in configuration rather than buried in application code.",
+      story: "Business rules have a habit of ending up hard-coded across a codebase, where changing one means a deploy. LogicFlow pulls them out into something you can draw: define the rule visually, and the platform executes it against incoming events.\n\nThe path is deliberately asynchronous. A NestJS gateway takes events over HTTP, applies rate limiting and auth, and drops them onto a Redis queue rather than processing inline — so a burst of traffic queues instead of timing out. Background workers pick the events up, evaluate the rules against them, and emit results, with real-time observability over the whole pipeline so a rule that misfires is visible rather than silent.\n\nThe whole thing runs under Docker Compose, which keeps the gateway, workers and Redis reproducible as one unit.",
+      tech: ["NestJS", "Redis", "TypeScript", "Docker", "Microservices"],
+      color: "bg-fuchsia-500/10 text-fuchsia-500 border-fuchsia-500/20",
+      // TODO: screenshots -> public/LogicFlow/ (rule builder, event pipeline view)
+      images: [],
+      link: "https://github.com/salimmay/logic-flow",
+    },
+    {
+      id: "hannout",
+      title: "Hanout Lamine Digital",
+      category: "Retail Ecosystem",
+      tag: "Commerce",
+      desc: "A retail platform built for how a Tunisian corner shop actually trades — informal credit, goods sold loose by weight, and an interface that speaks the local dialect.",
+      story: "Standard point-of-sale software assumes a shop that sells sealed units for cash. A Tunisian hanout does neither. It sells sel3a loose by weight, and it runs on trust — the carnet, a running tab a neighbour settles when they can. Software that can't express those two things is useless behind that counter.\n\nSo the model starts there. The digital carnet is a real ledger a customer can see from their phone, balance and transaction history included, rather than a number only the owner controls. Inventory handles quantities that aren't whole units. The customer app is React Native; the owner gets a separate React dashboard built for one person running a shop, not a retail chain.\n\nThe interface speaks Derja rather than translated French, because that is what makes it legible to the people using it. Even the visual language argues the point — warm cream and coffee brown instead of the grey of a supermarket terminal, on the grounds that the shop is a neighbourhood fixture and shouldn't be dressed like a checkout lane.",
+      tech: ["React Native", "Expo", "React", "Vite", "Node.js"],
+      color: "bg-yellow-500/10 text-yellow-500 border-yellow-500/20",
+      // Private repository — write-up only, deliberately no `link`.
+      // TODO: screenshots -> public/Hannout/ (storefront, carnet, admin)
+      images: [],
+    },
+    {
+      id: "gatt",
+      title: "Aziz Gattoussi Portfolio",
+      category: "Client Portfolio — Desktop Simulation",
+      tag: "Client Work",
+      desc: "A portfolio for a UI/UX and motion designer, built as a browser desktop: draggable files, a working dock, and case studies that open as windows.",
+      story: "Built for Aziz Gattoussi, a UI/UX and motion designer whose work needed a frame that wasn't another grid of thumbnails. The site presents itself as an operating system instead — it boots with a startup sequence and monogram, then hands you a desktop.\n\nProjects are files you can pick up and throw around, with spring physics doing the work so they carry weight rather than snapping to a grid. Opening one raises a window with the case study inside, laid out by a small layout engine that supports full-width, half-left and centre-narrow editorial blocks, so each study can be paced differently instead of pouring every project into one template.\n\nThe restraint that mattered was keeping it navigable. A desktop metaphor is easy to make cute and hard to make usable, so the dock stays fixed and every window is closable from the same place.",
+      tech: ["React", "Vite", "Framer Motion", "JavaScript"],
+      color: "bg-slate-400/10 text-slate-300 border-slate-400/20",
+      // TODO: screenshots -> public/GATT/ (boot sequence, desktop, case-study window)
+      images: [],
+      link: "https://github.com/salimmay/GATT",
+    },
+    {
+      id: "oldart",
+      title: "OldArt",
+      category: "Second-Hand Instrument Marketplace",
+      tag: "Marketplace",
+      desc: "A Symfony marketplace for used musical instruments, built around offers and negotiation rather than a fixed-price checkout.",
+      story: "Second-hand instruments don't sell like retail stock. Condition matters as much as the model, and the price is usually the start of a conversation rather than the end of one. OldArt is built around that: a seller lists an instrument with a description and a condition rating, and buyers respond with their own offer — their price, their message, their contact details — instead of adding it to a basket.\n\nIt is the one thing here that isn't JavaScript. Symfony with Doctrine ORM and Twig templates, migrations under version control, PHPUnit for the test suite, and Docker Compose so the stack comes up as one piece. Building it meant working against a framework with much stronger opinions than Express or Nest have, which is most of why it was worth doing.",
+      tech: ["PHP", "Symfony", "Doctrine ORM", "Twig", "Docker", "PHPUnit"],
+      color: "bg-green-500/10 text-green-500 border-green-500/20",
+      // TODO: screenshots -> public/OldArt/ (listings, instrument page, offer flow)
+      images: [],
+      link: "https://github.com/salimmay/OldArt",
     },
     {
       id: "slayemcanvas",
@@ -321,6 +378,49 @@ export const DATA = {
       color: "bg-purple-500/10 text-purple-500 border-purple-500/20",
       images: ["/SalimOS/Desktop.png"]
     },
+    // ── Utilities ─────────────────────────────────────────────────────────────
+    // kind: "utility" keeps these off the portfolio entirely — they render on
+    // /tools instead. Different audience: someone searching "png to ico" is not
+    // reading a CV, and a hiring manager does not care about a favicon tool.
+    {
+      id: "zenith",
+      title: "Zenith",
+      category: "TV Show Tracker",
+      tag: "Tracker",
+      kind: "utility" as const,
+      desc: "A tracker for the shows you are part-way through — what you have watched, what is next, and what you abandoned three episodes in.",
+      story: "A small, honest CRUD app. An Express and MongoDB API behind a JWT login, with shows and users as the only two models it needs, and a client that lists what you are watching.\n\nIt exists because every tracker worth using either wants a subscription or wants to become a social network. This one just remembers where you got to.",
+      tech: ["Node.js", "Express", "MongoDB", "JWT"],
+      color: "bg-violet-400/10 text-violet-300 border-violet-400/20",
+      images: [],
+      link: "https://github.com/salimmay/zenith",
+    },
+    {
+      // TODO(salim): confirm the real name, stack and repo, then drop the TODOs.
+      id: "download-manager",
+      title: "Download Manager",
+      category: "Desktop Utility",
+      tag: "Utility",
+      kind: "utility" as const,
+      desc: "A download manager in the vein of IDM — segmented downloads, pause and resume, and a queue that survives being closed.",
+      story: "Written up from Salim's description; the detail here is deliberately thin until the repo is public and can be read properly.",
+      tech: [],
+      color: "bg-sky-400/10 text-sky-300 border-sky-400/20",
+      images: [],
+    },
+    {
+      // TODO(salim): confirm the real name, stack and repo, then drop the TODOs.
+      id: "ico-converter",
+      title: "Favicon Converter",
+      category: "Image Utility",
+      tag: "Utility",
+      kind: "utility" as const,
+      desc: "Converts PNG and JPEG images into .ico favicons, at the sizes a browser actually asks for.",
+      story: "Written up from Salim's description; the detail here is deliberately thin until the repo is public and can be read properly.",
+      tech: [],
+      color: "bg-orange-400/10 text-orange-300 border-orange-400/20",
+      images: [],
+    },
   ],
   techStack: [
     {
@@ -356,7 +456,8 @@ export const DATA = {
  * the 3D hero and the Bento stat strip.
  */
 export const STATS = {
-  projects: DATA.projects.length,
+  /** Products only. Personal tools and /tools utilities are not "shipped" work. */
+  projects: DATA.projects.filter((project) => !project.kind).length,
   roles: DATA.experience.length,
   technologies: DATA.techStack.reduce((total, group) => total + group.skills.length, 0),
   /** Earliest role start year, read out of the "MM/YYYY - ..." date strings. */
