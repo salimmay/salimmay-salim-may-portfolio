@@ -21,9 +21,8 @@ export type Project = {
   /**
    * Absent  = a product, shipped for someone. Shown in Selected Work.
    * "tool"    = built to do the work with. Shown in the Toolchain section.
-   * "utility" = a small standalone tool. Lives on /tools, not in the portfolio.
    */
-  kind?: "tool" | "utility";
+  kind?: "tool";
 };
 
 export const DATA = {
@@ -377,49 +376,6 @@ export const DATA = {
       tech: ["Next.js", "Framer Motion", "Canvas"],
       color: "bg-purple-500/10 text-purple-500 border-purple-500/20",
       images: ["/SalimOS/Desktop.png"]
-    },
-    // ── Utilities ─────────────────────────────────────────────────────────────
-    // kind: "utility" keeps these off the portfolio entirely — they render on
-    // /tools instead. Different audience: someone searching "png to ico" is not
-    // reading a CV, and a hiring manager does not care about a favicon tool.
-    {
-      id: "zenith",
-      title: "Zenith",
-      category: "TV Show Tracker",
-      tag: "Tracker",
-      kind: "utility" as const,
-      desc: "A tracker for the shows you are part-way through — what you have watched, what is next, and what you abandoned three episodes in.",
-      story: "A small, honest CRUD app. An Express and MongoDB API behind a JWT login, with shows and users as the only two models it needs, and a client that lists what you are watching.\n\nIt exists because every tracker worth using either wants a subscription or wants to become a social network. This one just remembers where you got to.",
-      tech: ["Node.js", "Express", "MongoDB", "JWT"],
-      color: "bg-violet-400/10 text-violet-300 border-violet-400/20",
-      images: [],
-      link: "https://github.com/salimmay/zenith",
-    },
-    {
-      // TODO(salim): confirm the real name, stack and repo, then drop the TODOs.
-      id: "download-manager",
-      title: "Download Manager",
-      category: "Desktop Utility",
-      tag: "Utility",
-      kind: "utility" as const,
-      desc: "A download manager in the vein of IDM — segmented downloads, pause and resume, and a queue that survives being closed.",
-      story: "Written up from Salim's description; the detail here is deliberately thin until the repo is public and can be read properly.",
-      tech: [],
-      color: "bg-sky-400/10 text-sky-300 border-sky-400/20",
-      images: [],
-    },
-    {
-      // TODO(salim): confirm the real name, stack and repo, then drop the TODOs.
-      id: "ico-converter",
-      title: "Favicon Converter",
-      category: "Image Utility",
-      tag: "Utility",
-      kind: "utility" as const,
-      desc: "Converts PNG and JPEG images into .ico favicons, at the sizes a browser actually asks for.",
-      story: "Written up from Salim's description; the detail here is deliberately thin until the repo is public and can be read properly.",
-      tech: [],
-      color: "bg-orange-400/10 text-orange-300 border-orange-400/20",
-      images: [],
     },
   ],
   techStack: [

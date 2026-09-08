@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 
-import { DATA } from "../data";
 import {
   SITE_URL,
   TOOLS_DESCRIPTION,
@@ -22,7 +21,9 @@ import ToolsTerminal from "./ToolsTerminal";
  * indexable while still being a working REPL.
  */
 
-const UTILITIES = DATA.projects.filter((project) => project.kind === "utility");
+import { READY_TOOLS } from "./registry";
+
+// Schema for the index lists the tools that actually exist.
 
 export const metadata: Metadata = {
   title: TOOLS_TITLE,
@@ -46,7 +47,7 @@ export default function ToolsPage() {
     <main className="relative min-h-screen bg-slate-950">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(buildToolsSchema(UTILITIES)) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(buildToolsSchema(READY_TOOLS)) }}
       />
 
       <TerminalBackdrop />

@@ -85,10 +85,6 @@ export const IMAGE_ALT: Record<string, string> = {
 export const altFor = (src: string, projectTitle?: string) =>
   IMAGE_ALT[src] ?? (projectTitle ? `${projectTitle} project screenshot` : "Project screenshot");
 
-// Utilities are marked up on /tools instead, so the homepage list matches what is
-// actually on the homepage.
-const HOMEPAGE_PROJECTS = DATA.projects.filter((project) => project.kind !== "utility");
-
 const PERSON_ID = `${SITE_URL}/#salim`;
 
 /**
@@ -140,8 +136,8 @@ export const buildSchema = () => [
     "@context": "https://schema.org",
     "@type": "ItemList",
     name: `Projects by ${DATA.personal.name}`,
-    numberOfItems: HOMEPAGE_PROJECTS.length,
-    itemListElement: HOMEPAGE_PROJECTS.map((project, index) => {
+    numberOfItems: DATA.projects.length,
+    itemListElement: DATA.projects.map((project, index) => {
       const link = (project as { link?: string }).link;
       const live = (project as { ExternalLink?: string }).ExternalLink;
       return {
@@ -186,7 +182,7 @@ export const TOOLS_H1 = "Small tools I built and gave away";
  * entries can't — they aren't products, so they stay entity-level markup only.
  */
 export const buildToolsSchema = (
-  utilities: { title: string; desc: string; tech: string[]; link?: string }[]
+  tools: { name: string; description: string; link?: string }[]
 ) => [
   {
     "@context": "https://schema.org",
@@ -198,15 +194,14 @@ export const buildToolsSchema = (
     inLanguage: "en",
     author: { "@id": `${SITE_URL}/#salim` },
   },
-  ...utilities.map((tool) => ({
+  ...tools.map((tool) => ({
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
-    name: tool.title,
-    description: tool.desc,
+    name: tool.name,
+    description: tool.description,
     applicationCategory: "UtilitiesApplication",
     operatingSystem: "Windows, Web",
     author: { "@id": `${SITE_URL}/#salim` },
-    ...(tool.tech.length ? { programmingLanguage: tool.tech } : {}),
     ...(tool.link ? { codeRepository: tool.link } : {}),
     offers: {
       "@type": "Offer",
