@@ -213,6 +213,21 @@ const ProjectDrawer = ({ project, onClose }: { project: Project; onClose: () => 
                 ))}
               </div>
             </div>
+            {project.learnings && project.learnings.length > 0 && (
+              <div className="border-t border-slate-800 pt-6 mt-6">
+                <h4 className="text-sm font-bold text-white mb-3 uppercase tracking-wider">
+                  Key Learnings & Decisions
+                </h4>
+                <ul className="space-y-2">
+                  {project.learnings.map((learning: string, i: number) => (
+                    <li key={i} className="text-xs text-slate-300 leading-relaxed flex items-start gap-2">
+                      <span className="text-blue-400 font-mono mt-0.5">•</span>
+                      <span>{learning}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
         </div>
       </motion.div>

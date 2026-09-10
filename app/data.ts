@@ -1,4 +1,4 @@
-import { Server, Terminal, Code, Layers } from "lucide-react";
+import { Server, Terminal, Code, Layers, Shield, Sparkles } from "lucide-react";
 
 /**
  * Shape of an entry in DATA.projects. Declared explicitly rather than inferred,
@@ -23,6 +23,8 @@ export type Project = {
    * "tool"    = built to do the work with. Shown in the Toolchain section.
    */
   kind?: "tool";
+  /** Concrete engineering takeaways, constraints, architectural patterns, and decisions. */
+  learnings?: string[];
 };
 
 export const DATA = {
@@ -123,6 +125,11 @@ export const DATA = {
         "/Terkina/admin.png",
         "/Terkina/crm.png",
       ],
+      learnings: [
+        "Evaluating posed 3D meshes dynamically via vertex inspection rather than bind-pose Box3, ensuring reliable camera framing on upright character models.",
+        "Pairing on-demand ISR revalidation with WhatsApp dispatch lead persistence so administrative catalog updates take effect without cache delay.",
+        "Hardening 3D asset delivery and user input using Content Security Policy directives, edge rate limiting, and Zod validation schemas."
+      ],
     },
     {
       id: "vaultp",
@@ -136,6 +143,11 @@ export const DATA = {
       // TODO: screenshots -> public/VaultP/
       images: [],
       link: "https://github.com/salimmay/VaultP",
+      learnings: [
+        "Handling multi-currency values without floating-point rounding issues by parameterizing currency decimal exponents (such as Tunisian Dinar 3-decimal precision).",
+        "Structuring liabilities as deterministic audit ledgers where partial repayments evaluate interest on read rather than mutating running balances.",
+        "Running on-device OCR via Tesseract.js in background threads so text extraction does not block the UI during offline operation."
+      ],
     },
     {
       id: "logicflow",
@@ -149,6 +161,11 @@ export const DATA = {
       // TODO: screenshots -> public/LogicFlow/ (rule builder, event pipeline view)
       images: [],
       link: "https://github.com/salimmay/logic-flow",
+      learnings: [
+        "Decoupling event ingestion from rule execution via Redis BullMQ queues to provide prompt HTTP acknowledgement through queued processing.",
+        "Evaluating visual rule Directed Acyclic Graphs (DAGs) across worker processes to maintain clean execution boundaries.",
+        "Standardizing service environments across API gateways, workers, and Redis using Docker Compose."
+      ],
     },
     {
       id: "hannout",
@@ -162,6 +179,11 @@ export const DATA = {
       // Private repository — write-up only, deliberately no `link`.
       // TODO: screenshots -> public/Hannout/ (storefront, carnet, admin)
       images: [],
+      learnings: [
+        "Modeling fractional decimal weights for loose goods alongside discrete unit-based inventory in a unified interface.",
+        "Building an append-only digital credit ledger ('carnet') providing bidirectional customer and merchant visibility.",
+        "Structuring interface copy in local Derja phrasing to ensure clarity for neighborhood retail operators."
+      ],
     },
     {
       id: "gatt",
@@ -175,6 +197,10 @@ export const DATA = {
       // TODO: screenshots -> public/GATT/ (boot sequence, desktop, case-study window)
       images: [],
       link: "https://github.com/salimmay/GATT",
+      learnings: [
+        "Orchestrating desktop simulation state with Framer Motion spring physics to maintain natural drag motion across window viewports.",
+        "Isolating window z-index layering and focus hierarchies to prevent drag capture conflicts between case studies and dock elements."
+      ],
     },
     {
       id: "oldart",
@@ -188,6 +214,11 @@ export const DATA = {
       // TODO: screenshots -> public/OldArt/ (listings, instrument page, offer flow)
       images: [],
       link: "https://github.com/salimmay/OldArt",
+      learnings: [
+        "Enforcing domain boundaries and relational consistency through Symfony controllers, Doctrine ORM entities, and versioned database migrations.",
+        "Structuring negotiation workflows around contextual offer entities rather than standard e-commerce carts.",
+        "Automating backend verification with PHPUnit test suites within an isolated Docker environment."
+      ],
     },
     {
       id: "slayemcanvas",
@@ -202,6 +233,10 @@ export const DATA = {
       // TODO: screenshots -> public/SlayemCanvas/ (split view: blocks, canvas, assistant)
       images: [],
       link: "https://github.com/salimmay/SlayemCanvas",
+      learnings: [
+        "Injecting deterministic node IDs across Babel AST transformations, allowing surgical React element updates without full-page re-rendering.",
+        "Embedding a Next.js dev server instance within an iframe preview to reflect genuine routing and styling cascades."
+      ],
     },
     {
       id: "slayemcode",
@@ -216,6 +251,10 @@ export const DATA = {
       // TODO: screenshots -> public/SlayemCode/ (kanban, git diffs, heatmap)
       images: [],
       link: "https://github.com/salimmay/SlayemCode",
+      learnings: [
+        "Designing a multi-persona state machine on consumer hardware constraints by sequentially swapping Ollama model roles.",
+        "Enforcing filesystem boundaries and a programmatic Git diff engine to support clean review and rollback of AI code changes."
+      ],
     },
     {
       id: "twilight",
@@ -229,6 +268,10 @@ export const DATA = {
       // TODO: screenshots -> public/Twilight/
       images: [],
       link: "https://github.com/salimmay/Twilight-prod",
+      learnings: [
+        "Coordinating Lenis smooth scrolling with GSAP ScrollTrigger timelines to create choreographed reveals without thread lock.",
+        "Using Astro islands architecture to ship static HTML for editorial content while mounting React micro-islands for interactive media players."
+      ],
     },
     {
       id: "stajnet",
@@ -246,6 +289,10 @@ export const DATA = {
         "/StajNet/Dashboard.png"
       ],
       link: "https://github.com/salimmay/Tunisiar-Recrute",
+      learnings: [
+        "Managing multi-step recruitment flows across resume uploads, timed candidate quizzes, and workshop bookings with MongoDB and Express.",
+        "Handling file upload streams and payload validation on the Express API gateway to maintain stable memory usage."
+      ],
     },
     {
       id: "slayemide",
@@ -260,6 +307,10 @@ export const DATA = {
       // TODO: screenshots -> public/SlayemIDE/ (terminal capture)
       images: [],
       link: "https://github.com/salimmay/SlayemIDE",
+      learnings: [
+        "Building a terminal REPL using Python prompt_toolkit and Rich with syntax-highlighted streaming from local Ollama endpoints.",
+        "Persisting local session context and code snippet memory using ChromaDB vector embeddings."
+      ],
     },
     
     {
@@ -280,6 +331,10 @@ export const DATA = {
         "/Fiesta/invoice.png",
         "/Fiesta/tasks.png"
       ],
+      learnings: [
+        "Structuring polymorphic MongoDB schemas ('Chameleon Architecture') to accommodate domain-specific attributes across multiple hospitality verticals.",
+        "Generating server-side PDF contracts and invoices with headless Chromium via Puppeteer."
+      ],
     },
     {
       id: "autoscout",
@@ -290,12 +345,15 @@ export const DATA = {
       story: "The used car market in Tunisia is fragmented across messy platforms like Automobile.tn and Baniola. Finding a deal requires opening twenty tabs. I built AutoScout to unify this chaos.\n\nI engineered a custom scraping engine using Cheerio to fetch data in real-time. The core engineering challenge was Data Normalization: I wrote complex Regex patterns to parse unstructured HTML descriptions into clean, comparable JSON. The platform also includes a 'Fair Price' estimator that calculates market averages dynamically.",
       tech: ["Next.js", "TypeScript", "Cheerio", "Tailwind CSS", "Regex"],
       color: "bg-violet-500/10 text-violet-500 border-violet-500/20",
-      
       images: [
         "/AutoScout/home.png",
         "/AutoScout/listings1.png",
         "/AutoScout/listings2.png",
         "/AutoScout/Browse.png",
+      ],
+      learnings: [
+        "Scraping heterogeneous marketplace markup in real time using Cheerio with resilient HTML parsing.",
+        "Normalizing inconsistent automotive specifications into standardized JSON schemas using regular expression pipelines."
       ],
     },
     {
@@ -310,6 +368,10 @@ export const DATA = {
       images: [
         "/Atlas/dashboard.png",
         "/Atlas/api-docs.png",
+      ],
+      learnings: [
+        "Buffering write-heavy event ingestion traffic with Redis BullMQ queues, providing prompt HTTP acknowledgement through queued processing.",
+        "Aggregating raw telemetry streams into PostgreSQL time-series tables using batched UPSERT statements."
       ],
     },
     {
@@ -331,23 +393,10 @@ export const DATA = {
         "/CuisineIQ/PhoneMenu.jpg",
         "/CuisineIQ/PhoneOrder.jpg"
       ],
-      ExternalLink: "https://addons.mozilla.org/en-US/firefox/addon/zen-history/",
-      link: "https://github.com/salimmay/zen-history",
-    },
-    {
-      id: "zen-history",
-      title: "Zen History",
-      category: " Web Extension",
-      tag: "Productivity",
-      desc: "An innovative Firefox extension designed to revolutionize your web browsing habits. By leveraging advanced time-tracking algorithms, Zen History provides users with deep insights into their digital consumption, helping them cultivate healthier online behaviors and make more intentional use of their screen time.",
-      story: "I designed Zen History to serve as a sophisticated digital wellness tool. Its core feature is a real-time analytics engine that tracks and categorizes browsing activity, providing users with a clear visual breakdown of their time spent across different categories. To encourage mindful usage, I implemented a dynamic AI-driven 'Reflector' that analyzes these patterns and generates personalized, actionable insights. Additionally, the extension includes a 'Time Capsule' feature, allowing users to set future goals and review their progress over time, transforming passive screen time into a conscious journey of self-improvement.",
-      tech: ["Firefox Extension API", "Chart.js", "JavaScript", "HTML", "CSS"],
-      color: "bg-blue-500/10 text-blue-500 border-blue-500/20",
-      images: [
-        "/Zen/history.png",
-        "/Zen/time-wasted.png",
-        "/Zen/zen-reflections.png"
-      ]
+      learnings: [
+        "Synchronizing table orders and kitchen status in real time via Socket.IO WebSocket channels.",
+        "Designing dynamic table-specific QR encoding schemes that associate orders with tables securely."
+      ],
     },
     {
       id: "syrvis",
@@ -364,45 +413,67 @@ export const DATA = {
         "/Syrvis/Comparison.png",
         "/Syrvis/Dashboard.png",
         "/Syrvis/ManageOrders.png"
-      ]
+      ],
+      learnings: [
+        "Implementing client-side cart persistence and state management with Redux Toolkit.",
+        "Structuring a modular NestJS backend with dedicated services for catalog, order lifecycle, and authentication."
+      ],
     },
     {
       id: "SalimOS",
       title: "SalimOS",
-      category: "Interactive Portfolio",
+      category: "Interactive Web Operating System",
       tag: "Creative",
-      desc: "An immersive 'Web Operating System' with physics simulations.",
-      story: "Why tell people you can code when you can show them? SalimOS is a playground that simulates a desktop environment within the browser, utilizing Framer Motion for window management and canvas for background physics.",
-      tech: ["Next.js", "Framer Motion", "Canvas"],
+      desc: "An immersive browser desktop environment featuring a draggable window system, 2D canvas physics, retro audio synthesis, and a suite of client-side privacy tools.",
+      story: "Why explain what you can engineer when you can let visitors explore it? SalimOS simulates a desktop operating system inside the browser, combining window management, interactive physics simulations, and local-first developer utilities.\n\nThe window manager orchestrates focus hierarchies, drag momentum, minimization, and dynamic z-index layering using Framer Motion. Procedural background engines drive particle physics, collision boundaries, and screen effects via the Canvas 2D API, while an audio engine handles low-latency retro sound effects.\n\nSalimOS also hosts a local-first browser tools suite: in-memory binary generation for ICO and ZIP files with CRC-32 checksums, client-side EXIF/GPS metadata inspection plus canvas re-rasterization for clean output, DOMParser-based SVG sanitization, CSPRNG password generation, and WCAG/OKLCH color calculations.",
+      tech: ["Next.js", "TypeScript", "Framer Motion", "Canvas API", "Web Audio API", "Web Crypto API"],
       color: "bg-purple-500/10 text-purple-500 border-purple-500/20",
-      images: ["/SalimOS/Desktop.png"]
+      images: ["/SalimOS/Desktop.png"],
+      link: "https://github.com/salimmay/Salim-os",
+      learnings: [
+        "Orchestrating multi-window state (focus hierarchies, z-index elevation, drag constraints, minimize/maximize) via Framer Motion spring physics.",
+        "Engineering requestAnimationFrame-driven Canvas effects (particle velocity, angular momentum, collision boundaries, slice mechanics).",
+        "Synthesizing low-latency audio cues using the Web Audio API with a centralized audio cache.",
+        "Implementing local-first, in-browser processing for file utilities: in-memory binary packing with DataView, metadata inspection plus canvas re-rasterization for clean output, and DOMParser SVG sanitization."
+      ]
     },
   ],
   techStack: [
     {
-      title: "Languages",
-      skills: ["Java", "PHP", "JavaScript", "HTML", "CSS"],
+      title: "Languages & Core Web",
+      skills: ["TypeScript", "JavaScript (ES6+)", "Python", "PHP", "SQL", "Java"],
       icon: Code,
-      // For Bento view string format
-      items: "Java, PHP, JavaScript, HTML, CSS"
+      items: "TypeScript, JavaScript (ES6+), Python, PHP, SQL, Java"
     },
     {
-      title: "Frontend",
-      skills: ["React", "Next.js", "Tailwind CSS", "Redux"],
+      title: "Frontend & UI Systems",
+      skills: ["React", "Next.js", "Tailwind CSS", "Framer Motion"],
       icon: Layers,
-      items: "React, Next.js, Tailwind, Redux"
+      items: "React, Next.js, Tailwind CSS, Framer Motion"
     },
     {
-      title: "Backend",
-      skills: ["Node.js", "Express", "MongoDB", "Spring Boot", "Laravel"],
+      title: "Backend, Data & Real-Time",
+      skills: ["Node.js", "NestJS", "Express", "PostgreSQL", "MongoDB", "Spring Boot", "Laravel"],
       icon: Server,
-      items: "Node, Express, MongoDB, Spring Boot, Laravel"
+      items: "Node.js, NestJS, Express, PostgreSQL, MongoDB, Spring Boot, Laravel"
     },
     {
-      title: "DevOps",
-      skills: ["Linux", "Docker", "Git", "System Admin"],
+      title: "Browser Engineering & Privacy",
+      skills: ["Client-Side Architecture", "Web Crypto API", "Web APIs & DOM", "Data Security & CSP"],
+      icon: Shield,
+      items: "Client-Side Architecture, Web Crypto API, Web APIs & DOM, Data Security & CSP"
+    },
+    {
+      title: "Creative Coding & Interactive",
+      skills: ["Three.js", "React Three Fiber", "Canvas API"],
+      icon: Sparkles,
+      items: "Three.js, React Three Fiber, Canvas API"
+    },
+    {
+      title: "Infrastructure, Delivery & Testing",
+      skills: ["Docker", "Git", "Automated Testing"],
       icon: Terminal,
-      items: "Linux, Docker, Git, System Admin"
+      items: "Docker, Git, Automated Testing"
     },
   ]
 };

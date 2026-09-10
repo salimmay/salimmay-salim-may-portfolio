@@ -345,6 +345,22 @@ const ProjectModal = ({ project, onClose }: { project: Project; onClose: () => v
                 ))}
               </div>
             </div>
+
+            {project.learnings && project.learnings.length > 0 && (
+              <div className="bg-zinc-950/80 rounded-xl p-6 border border-zinc-800 mt-4">
+                <h4 className="text-xs font-bold text-zinc-500 uppercase tracking-wider mb-3 flex items-center gap-2">
+                  <Terminal size={14} className="text-indigo-400" /> Key Learnings & Decisions
+                </h4>
+                <ul className="space-y-2">
+                  {project.learnings.map((learning: string, i: number) => (
+                    <li key={i} className="text-xs text-zinc-300 leading-relaxed flex items-start gap-2">
+                      <span className="text-indigo-400 font-mono mt-0.5">•</span>
+                      <span>{learning}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
         </div>
       </motion.div>
@@ -471,7 +487,7 @@ export default function BentoLayout() {
                </p>
             </div>
             
-            <div className="flex-1 w-full grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="flex-1 w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                {DATA.techStack.map((tech) => (
                  <TechCategory
                    key={tech.title}
