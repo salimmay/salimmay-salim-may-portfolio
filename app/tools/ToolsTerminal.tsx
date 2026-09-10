@@ -3,7 +3,7 @@
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowUpRight, Github, Terminal as TerminalIcon } from "lucide-react";
+import { ArrowUpRight, Coffee, Github, Terminal as TerminalIcon } from "lucide-react";
 
 import { DATA } from "../data";
 import { BUY_ME_A_COFFEE, TOOLS_H1 } from "../lib/seo";
@@ -34,6 +34,8 @@ const CATEGORY_COLOR: Record<Tool["category"], string> = {
   Colour: "text-violet-400 border-violet-500/30",
   Privacy: "text-emerald-400 border-emerald-500/30",
   Media: "text-amber-400 border-amber-500/30",
+  Developer: "text-sky-400 border-sky-500/30",
+  Security: "text-rose-400 border-rose-500/30",
 };
 
 const HELP: Line[] = [
@@ -146,7 +148,11 @@ export default function ToolsTerminal() {
             push([echo, { kind: "out", text: "thank you, genuinely." }]);
             window.open(BUY_ME_A_COFFEE, "_blank", "noopener,noreferrer");
           } else {
-            push([echo, { kind: "out", text: "not set up yet — the tools are free regardless." }]);
+            push([
+              echo,
+              { kind: "out", text: "Buy Me a Coffee link is coming soon!" },
+              { kind: "out", text: "Every tool here runs 100% in your browser and is free forever." },
+            ]);
           }
           break;
 
@@ -211,16 +217,29 @@ export default function ToolsTerminal() {
   return (
     <div className="relative mx-auto max-w-4xl px-4 py-12 md:px-6 md:py-20">
       <div className="overflow-hidden rounded-xl border border-slate-800 bg-slate-950/80 shadow-[0_0_80px_rgba(37,99,235,0.10)] backdrop-blur-sm">
-        <div className="flex items-center gap-3 border-b border-slate-800 bg-slate-900/70 px-4 py-3">
-          <div className="flex gap-1.5">
-            <span className="h-3 w-3 rounded-full bg-red-500/70" />
-            <span className="h-3 w-3 rounded-full bg-amber-500/70" />
-            <span className="h-3 w-3 rounded-full bg-emerald-500/70" />
+        <div className="flex items-center justify-between border-b border-slate-800 bg-slate-900/70 px-4 py-3">
+          <div className="flex items-center gap-3">
+            <div className="flex gap-1.5">
+              <span className="h-3 w-3 rounded-full bg-red-500/70" />
+              <span className="h-3 w-3 rounded-full bg-amber-500/70" />
+              <span className="h-3 w-3 rounded-full bg-emerald-500/70" />
+            </div>
+            <p className="flex items-center gap-2 font-mono text-xs text-slate-500">
+              <TerminalIcon size={12} />
+              salim@tools — {TOOLS.length} packages
+            </p>
           </div>
-          <p className="flex items-center gap-2 font-mono text-xs text-slate-500">
-            <TerminalIcon size={12} />
-            salim@tools — {TOOLS.length} packages
-          </p>
+
+          <button
+            type="button"
+            onClick={() => run("coffee")}
+            className="flex items-center gap-1.5 rounded border border-amber-500/20 bg-amber-500/5 px-2.5 py-1 font-mono text-xs text-amber-400 transition-colors hover:border-amber-500/40 hover:bg-amber-500/10"
+            title={BUY_ME_A_COFFEE ? "Support Salim on Buy Me a Coffee" : "Buy Me a Coffee (coming soon)"}
+          >
+            <Coffee size={12} />
+            <span>coffee</span>
+            {!BUY_ME_A_COFFEE && <span className="text-[10px] text-amber-500/70">[soon]</span>}
+          </button>
         </div>
 
         <div className="max-h-[70vh] overflow-y-auto p-5 font-mono text-sm leading-relaxed md:p-7">

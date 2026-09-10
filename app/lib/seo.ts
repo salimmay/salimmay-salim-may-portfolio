@@ -165,8 +165,8 @@ export const buildSchema = () => [
 // someone to hire. So the copy targets what they would actually type, and the
 // page carries the support link that would read badly on a CV.
 
-/** Set this once the account exists; the button only renders when it is non-empty. */
-export const BUY_ME_A_COFFEE = "";
+/** Set this once the account exists; or set NEXT_PUBLIC_BUY_ME_A_COFFEE in .env.local */
+export const BUY_ME_A_COFFEE = process.env.NEXT_PUBLIC_BUY_ME_A_COFFEE || "";
 
 export const TOOLS_TITLE = "Free Developer Tools & Utilities — Salim May";
 

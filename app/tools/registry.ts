@@ -23,6 +23,7 @@ export type Tool = {
   /** Fuller description for the tool page and its meta description. */
   description: string;
   category: "Images" | "Colour" | "Privacy" | "Media";
+  category: "Images" | "Colour" | "Privacy" | "Media" | "Developer" | "Security";
   kind: ToolKind;
   /** Search terms this tool should be findable by. Drives page metadata. */
   keywords: string[];
@@ -71,7 +72,7 @@ export const TOOLS: Tool[] = [
     category: "Privacy",
     kind: "browser",
     keywords: ["remove exif", "strip gps from photo", "image metadata remover", "exif cleaner"],
-    ready: false,
+    ready: true,
   },
   {
     slug: "colour-converter",
@@ -82,7 +83,7 @@ export const TOOLS: Tool[] = [
     category: "Colour",
     kind: "browser",
     keywords: ["hex to rgb", "rgb to hsl", "oklch converter", "css colour converter"],
-    ready: false,
+    ready: true,
   },
   {
     slug: "contrast-checker",
@@ -93,7 +94,7 @@ export const TOOLS: Tool[] = [
     category: "Colour",
     kind: "browser",
     keywords: ["wcag contrast checker", "colour contrast ratio", "accessibility contrast"],
-    ready: false,
+    ready: true,
   },
   {
     slug: "palette-extractor",
@@ -104,7 +105,109 @@ export const TOOLS: Tool[] = [
     category: "Colour",
     kind: "browser",
     keywords: ["extract colours from image", "image palette generator", "dominant colour"],
-    ready: false,
+    ready: true,
+  },
+  {
+    slug: "qr-code-generator",
+    name: "QR Code Generator",
+    blurb: "Generate SVG and PNG QR codes with custom styling",
+    description:
+      "Generate high-resolution QR codes for URLs, Wi-Fi networks, vCards, emails, phone numbers, and raw text. Customize foreground and background colors, error-correction levels, and quiet zone margins with instant SVG and PNG downloads.",
+    category: "Developer",
+    kind: "browser",
+    keywords: [
+      "qr code generator",
+      "wifi qr code",
+      "vcard qr code",
+      "svg qr code",
+      "custom qr code generator",
+    ],
+    ready: true,
+  },
+  {
+    slug: "css-box-shadow-generator",
+    name: "CSS Box Shadow Generator",
+    blurb: "Layer multi-stage box shadows with live preview",
+    description:
+      "Build multi-layer CSS box shadows with live controls for offset, blur, spread, color, opacity, and inset. Test against light and dark surfaces, reorder layers, and copy valid CSS.",
+    category: "Developer",
+    kind: "browser",
+    keywords: [
+      "css box shadow generator",
+      "box shadow generator",
+      "smooth shadow css",
+      "multi layer shadow",
+      "css shadow tool",
+    ],
+    ready: true,
+  },
+  {
+    slug: "svg-optimizer",
+    name: "SVG Optimizer",
+    blurb: "Clean bloated markup and metadata from SVG files",
+    description:
+      "Safely sanitize and minify SVG files by stripping XML comments, editor metadata, non-rendering tags, scripts, and redundant whitespace. Compares byte sizes with live preview and safe download.",
+    category: "Images",
+    kind: "browser",
+    keywords: [
+      "svg optimizer",
+      "minify svg",
+      "clean svg online",
+      "svg sanitizer",
+      "remove svg metadata",
+    ],
+    ready: true,
+  },
+  {
+    slug: "password-generator",
+    name: "Password Generator",
+    blurb: "Cryptographically secure passwords with entropy readout",
+    description:
+      "Generate cryptographically secure passwords using window.crypto.getRandomValues. Customize length, character sets, and ambiguous character filtering with guaranteed group inclusion, unbiased Fisher-Yates shuffle, and NIST entropy estimation.",
+    category: "Security",
+    kind: "browser",
+    keywords: [
+      "password generator",
+      "secure password generator",
+      "csprng password",
+      "random password generator",
+      "password entropy",
+    ],
+    ready: true,
+  },
+  {
+    slug: "timestamp-converter",
+    name: "Timestamp Converter",
+    blurb: "Convert Unix timestamps, ISO dates, and local times",
+    description:
+      "Convert between Unix seconds, milliseconds, ISO 8601, UTC, and your local timezone. Supports past/future dates before 1970, relative time readouts, and a live ticking clock.",
+    category: "Developer",
+    kind: "browser",
+    keywords: [
+      "unix timestamp converter",
+      "epoch converter",
+      "iso 8601 to unix",
+      "milliseconds to date",
+      "relative time calculator",
+    ],
+    ready: true,
+  },
+  {
+    slug: "json-formatter",
+    name: "JSON Formatter",
+    blurb: "Format, validate, minify, and sort JSON keys",
+    description:
+      "Format, indent, validate, and minify JSON documents locally. Sort object keys alphabetically (shallow or deep), locate syntax error line and column numbers, and copy or download the result.",
+    category: "Developer",
+    kind: "browser",
+    keywords: [
+      "json formatter",
+      "json validator",
+      "minify json",
+      "sort json keys",
+      "pretty print json",
+    ],
+    ready: true,
   },
   {
     slug: "zenith",
